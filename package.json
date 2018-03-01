@@ -21,10 +21,11 @@
   },
   "dependencies": {
     "babel-preset-env": "^1.6.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "jwt-decode": "^2.2.0",
     "material-ui": "^1.0.0-beta.34",
     "material-ui-icons": "^1.0.0-beta.17",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2"
   }
 }

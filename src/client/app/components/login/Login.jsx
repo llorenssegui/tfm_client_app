@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
+import AuthService from '../../services/AuthService.jsx';
 
 const styles = theme => ({
     container: {
@@ -28,42 +29,70 @@ const styles = theme => ({
 
 class Login extends React.Component {
 
-    state={email: ''};
+    constructor() {
+        super();
+        this.handleChange = this.handleChange.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+        this.Auth = new AuthService();
+    }
   
-    handleChange = name => event => {
-        this.setState({
-          [name]: event.target.value,
-        });
-    };
+    handleChange(e) {
+        this.setState(
+            {
+                [e.target.name]: e.target.value
+            }
+        )
+    }
+
+    handleFormSubmit(e) {
+        e.preventDefault();
+      
+        this.Auth.login(this.state.email,this.state.password)
+            .then(res => {
+               this.props.history.replace('/');
+            })
+            .catch(err => {
+                alert(err);
+            })
+    }
+
+    componentWillMount() {
+        if(this.Auth.loggedIn()) {
+            this.props.history.replace('/');
+        }
+    }
 
     render() {
         const { classes } = this.props;
         return(
-            <form>
+            <form onSubmit={this.handleFormSubmit}>
                 <Grid container spacing={24} className={classes.login_container}>
                     <Grid item xs={12}>
                         <TextField
                             id="email"
                             label="E-mail"
+                            name="email"
                             className={classes.textField}
-                            value={this.state.email}
                             placeholder="E-mail"
                             margin="normal"
                             type="email"
+                            onChange={this.handleChange}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
                             id="password"
+                            name="password"
                             label="Contrassenya"
                             className={classes.textField}
                             margin="normal"
                             type="password"
                             placeholder="Contrasenya"
+                            onChange={this.handleChange}
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="raised" color="primary" className={classes.button}>
+                        <Button type="submit" variant="raised" color="primary" className={classes.button}>
                             Accedeix
                         </Button>
                     </Grid>

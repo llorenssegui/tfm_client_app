@@ -50,6 +50,7 @@ class Login extends React.Component {
         this.Auth.login(this.state.email,this.state.password)
             .then(res => {
                this.props.history.replace('/');
+               location.reload();
             })
             .catch(err => {
                 alert(err);

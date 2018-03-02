@@ -4,6 +4,8 @@ import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
+import LoginIcon from './iconLogin/LoginIcon.jsx';
+import AuthService from '../services/AuthService.jsx';
 
 const styles = {
   root: {
@@ -12,6 +14,9 @@ const styles = {
 };
 
 class Header extends React.Component {
+
+    Auth = new AuthService();
+
     render() {
         const { classes } = this.props;
         return(
@@ -19,8 +24,10 @@ class Header extends React.Component {
                 <AppBar position="static">
                     <Toolbar>
                     <Typography variant="title" color="inherit">
-                        Title
+                        Teacher Support
                     </Typography>
+                    {this.Auth.loggedIn() && <LoginIcon /> 
+                    }    
                     </Toolbar>
                 </AppBar>
             </div>

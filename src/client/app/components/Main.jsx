@@ -4,6 +4,7 @@ import Home from './home/Home.jsx';
 import { BrowserRouter, Router, Route, Switch } from 'react-router-dom';
 
 class Main extends React.Component {
+    /* <Route component={NotFound}/> */
     render() {
         return (
             <BrowserRouter>

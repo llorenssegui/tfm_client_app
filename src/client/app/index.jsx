@@ -16,9 +16,7 @@ class App extends React.Component {
 }
 
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+    <App />,
   document.getElementById('app')
 );
 

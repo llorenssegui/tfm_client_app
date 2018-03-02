@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const config = require('./config.js');
 
 module.exports = {
   entry: [
@@ -29,6 +30,6 @@ module.exports = {
     contentBase: './dist',
     hot: true,
     historyApiFallback: true,
-    port:3000
+    port: config.clientPort
   }
 };

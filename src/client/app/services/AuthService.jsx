@@ -1,12 +1,14 @@
 import decode from 'jwt-decode';
+import config from '../../../../config.js';
 
 class AuthService {
     // Initializing important variables
-    constructor(domain) {
-        this.domain = 'http://127.0.0.1:8000' // API server domain
+    constructor() {
+        this.domain = config.apiEndpoint // API server domain
         this.fetch = this.fetch.bind(this) // React binding stuff
         this.login = this.login.bind(this)
         this.getProfile = this.getProfile.bind(this)
+        this.isLogin = false;
     }
 
     login(username, passwordd) {
@@ -22,6 +24,7 @@ class AuthService {
             body: JSON.stringify(data)
         }).then(res => {
             this.setToken(res.token) // Setting the token in localStorage
+            this.isLogin = true;
             return Promise.resolve(res);
         })
     }
@@ -36,6 +39,7 @@ class AuthService {
         try {
             const decoded = decode(token);
             if (decoded.exp < Date.now() / 1000) { // Checking if token is expired. N
+                this.isLogin = false;
                 return true;
             }
             else
@@ -58,6 +62,7 @@ class AuthService {
 
     logout() {
         // Clear user token and profile data from localStorage
+        this.isLogin = false;
         localStorage.removeItem('id_token');
     }
 

@@ -9,6 +9,7 @@ class Home extends React.Component {
     handleLogout() {
         this.Auth.logout()
         this.props.history.replace('/login');
+        location.reload();
      }
 
     render() {

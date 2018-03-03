@@ -1,21 +1,30 @@
 import React from 'react';
-import AuthService from '../../services/AuthService.jsx';
 import withAuth from '../functions/withAuth.jsx';
+import Centres from '../centres/Centres.jsx';
+import config from '../../../../../config.js';
 
 class Home extends React.Component {
-    
-    Auth = new AuthService();
 
-    handleLogout() {
-        this.Auth.logout()
-        this.props.history.replace('/login');
-        location.reload();
-     }
+    constructor (props) {
+        super(props);
+        this.state = { centres: [] };
+    }
+
+    componentWillMount() {
+        let url = config.apiEndpoint + '/centres/';
+        fetch(url)
+        .then((response) => {
+            return response.json()
+        })
+        .then((centres) => {
+            this.setState({ centres: centres })
+        })
+    }
 
     render() {
         return(
         <div>
-            <button type="button" className="form-submit" onClick={this.handleLogout.bind(this)}>Logout</button>
+            <Centres centres={this.state.centres}/>            
         </div>);
     }
 }

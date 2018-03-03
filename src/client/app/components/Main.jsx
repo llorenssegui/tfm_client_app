@@ -10,6 +10,7 @@ class Main extends React.Component {
             <BrowserRouter>
                 <Switch>
                   <Route exact path='/' component={Home} />
+                  <Route exact path='/centres' component={Home} />
                   <Route exact path='/login' component={Login} />
                </Switch>
             </BrowserRouter>

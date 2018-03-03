@@ -19,7 +19,7 @@ const styles = {
       marginRight: 20,
     },
     rigthAlign: {
-        align: 'rigth',
+        textAlign: 'rigth',
     }
 };
 

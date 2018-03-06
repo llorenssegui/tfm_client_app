@@ -18,7 +18,6 @@ class AuthService {
             email: username,
             password: passwordd
         };
-        console.log(data);
         return this.fetch(url, {
             method: 'POST',
             body: JSON.stringify(data)

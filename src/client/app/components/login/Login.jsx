@@ -61,6 +61,7 @@ class Login extends React.Component {
         if(this.Auth.loggedIn()) {
             this.props.history.replace('/');
         }
+        
     }
 
     render() {

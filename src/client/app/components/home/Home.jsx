@@ -2,12 +2,14 @@ import React from 'react';
 import withAuth from '../functions/withAuth.jsx';
 import Centres from '../centres/Centres.jsx';
 import config from '../../../../../config.js';
+import AuthService from '../../services/AuthService.jsx';
 
 class Home extends React.Component {
 
     constructor (props) {
         super(props);
         this.state = { centres: [] };
+        this.Auth = new AuthService();
     }
 
     componentWillMount() {
@@ -17,14 +19,20 @@ class Home extends React.Component {
             return response.json()
         })
         .then((centres) => {
-            this.setState({ centres: centres })
+            let id_professor = this.Auth.getProfile().id;
+            let filteredCentres = centres.filter((centre) => centre.professor === id_professor);
+            this.setState({ centres: filteredCentres })
         })
+    }
+
+    addCentres(centre) {
+        if(centre) this.setState({centres: this.state.centres.concat([centre])});
     }
 
     render() {
         return(
         <div>
-            <Centres centres={this.state.centres}/>            
+            <Centres onAddCentres={this.addCentres.bind(this)} professor={this.Auth.getProfile().id} centres={this.state.centres}/>            
         </div>);
     }
 }

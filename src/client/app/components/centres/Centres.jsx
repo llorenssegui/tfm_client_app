@@ -7,6 +7,7 @@ import Grid from 'material-ui/Grid';
 import AddIcon from 'material-ui-icons/Add';
 import Button from 'material-ui/Button';
 import FormulariCrearCentre from './FormulariCrearCentre.jsx';
+import Notificacio from '../notificacions/Notificacio.jsx';
 import config from '../../../../../config.js';
 
 const styles = theme => ({
@@ -23,21 +24,31 @@ const styles = theme => ({
 
 class Centres extends React.Component {
     state = {
-        formulariObert: false
+        formulariCrearCentreObert: false,
+        mostrarNotificacio: false,
+        titolCentreCreat: "Centre creat satisfactoriament"
     };
 
+    constructor(props){
+        super(props);
+    }
+
     handleFormulari (event) {
-        this.setState({ formulariObert: true });
+        this.setState({ formulariCrearCentreObert: true });
     }
 
     handleCloseFormulari (event) {
-        this.setState({ formulariObert: false });
+        this.setState({ formulariCrearCentreObert: false });
+    }
+
+    tancarNotificacio() {
+        this.setState({mostrarNotificacio:false});
     }
 
     handleCrearCentre (centre) {
-        this.setState({ formulariObert: false });
-        console.log(JSON.stringify(centre));
+        this.setState({ formulariCrearCentreObert: false });
         let url = config.apiEndpoint + '/centres/';
+        if(!centre.professor) centre.professor = this.props.professor;
         fetch(url, {
             method: 'POST',
             headers: {
@@ -46,9 +57,10 @@ class Centres extends React.Component {
             body: JSON.stringify(centre)
         }).then(function(response) {  
             return response.json();
-        }).then(data => {
-            this.setState({formulariObert:false});
-            //this.props.centres.push(centre);
+        }).then((centre) => {
+            this.setState({formulariCrearCentreObert:false});
+            this.setState({mostrarNotificacio:true});
+            this.props.onAddCentres(centre);
         });
     }
 
@@ -71,10 +83,15 @@ class Centres extends React.Component {
                         <AddIcon />
                     </Button> 
                     <FormulariCrearCentre 
-                        open={this.state.formulariObert}
+                        open={this.state.formulariCrearCentreObert}
                         handleClose={this.handleCloseFormulari.bind(this)}
                         onCreateCentre={this.handleCrearCentre.bind(this)}
-                    />          
+                    />   
+                    <Notificacio 
+                        open={this.state.mostrarNotificacio}
+                        missatge={this.state.titolCentreCreat}
+                        onCloseNotificacio={this.tancarNotificacio.bind(this)}
+                    />       
                 </Grid>
             </div>
         );

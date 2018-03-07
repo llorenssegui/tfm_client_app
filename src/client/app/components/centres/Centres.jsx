@@ -26,7 +26,8 @@ class Centres extends React.Component {
     state = {
         formulariCrearCentreObert: false,
         mostrarNotificacio: false,
-        titolCentreCreat: "Centre creat satisfactoriament"
+        titolCentreCreat: "Centre creat satisfactoriament",
+        centreSeleccionat: undefined
     };
 
     constructor(props){
@@ -34,7 +35,7 @@ class Centres extends React.Component {
     }
 
     handleFormulari (event) {
-        this.setState({ formulariCrearCentreObert: true });
+        this.setState({ formulariCrearCentreObert: true, centreSeleccionat: undefined });
     }
 
     handleCloseFormulari (event) {
@@ -64,6 +65,11 @@ class Centres extends React.Component {
         });
     }
 
+    handleActualitzarCentre(centre) {
+        console.log(centre);
+        this.setState({formulariCrearCentreObert: true, centreSeleccionat: centre});
+    }
+
     render() {
         const { classes } = this.props;
         return(
@@ -73,9 +79,10 @@ class Centres extends React.Component {
                         return(
                         <Grid item xs={12} sm={6}>
                             <Centre 
-                                key={c.id}
+                                id={c.id}
                                 nom={c.nom}
                                 ubicacio={c.ubicacio}
+                                onEditCentre={this.handleActualitzarCentre.bind(this)}
                             />
                         </Grid>);
                     })}
@@ -86,6 +93,8 @@ class Centres extends React.Component {
                         open={this.state.formulariCrearCentreObert}
                         handleClose={this.handleCloseFormulari.bind(this)}
                         onCreateCentre={this.handleCrearCentre.bind(this)}
+                        centre={this.state.centreSeleccionat}
+                        onUpdateCentre={this.handleActualitzarCentre.bind(this)}
                     />   
                     <Notificacio 
                         open={this.state.mostrarNotificacio}

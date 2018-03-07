@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
+import IconaEditar from '../iconaEditar/IconaEditar.jsx';
 
 const styles = theme => ({
     root: theme.mixins.gutters({
@@ -12,6 +13,9 @@ const styles = theme => ({
       marginTop: theme.spacing.unit * 3,
       cursor: 'pointer',
     }),
+    rightAlign: {
+        textAlign: 'right'
+    },
 });
 
 class Centre extends React.Component {
@@ -20,11 +24,23 @@ class Centre extends React.Component {
         super(props);
     }
 
+    handleEditarCentre() {
+        let centre = {
+            id: this.props.id,
+            nom: this.props.nom,
+            ubicacio: this.props.ubicacio
+        };
+        this.props.onEditCentre(centre);
+    }
+
     render() {
         const { classes } = this.props;
         return(
             <div>
                 <Paper className={classes.root} elevation={4}>
+                    <div className={classes.rightAlign} onClick={this.handleEditarCentre.bind(this)}>
+                        <IconaEditar />
+                    </div>
                     <Typography variant="headline" component="h3">
                     {this.props.nom}
                     </Typography>

@@ -2,8 +2,6 @@ import React from 'react';
 import Snackbar from 'material-ui/Snackbar';
 
 class Notificacio extends React.Component {
-
-
   render() {
     return (
       <div>

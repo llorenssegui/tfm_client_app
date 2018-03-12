@@ -28,6 +28,20 @@ export default class FormulariCrearCentre extends React.Component {
     };
   }
 
+
+
+  componentWillReceiveProps(nextProps) {
+    let nomCentre = '';
+    let ubicacioCentre = '';
+    let modeModificar = false;
+    if(nextProps.centre) {
+      modeModificar = true;
+      nomCentre = nextProps.centre.nom;
+      ubicacioCentre = nextProps.centre.ubicacio;
+    }
+    this.setState({nom: nomCentre, ubicacio: ubicacioCentre, modeModificar: modeModificar});
+  }
+
   onClickProcessarFormulari() {
     let centre = {
       nom: this.state.nom,
@@ -42,11 +56,11 @@ export default class FormulariCrearCentre extends React.Component {
   }
 
   onChangeNomInputText(event) {
-    this.setState({nom: event.target.value})
+    this.setState({nom: event.target.value});
   }
 
   onChangeUbicacioInputText(event) {
-    this.setState({ubicacio: event.target.value})
+    this.setState({ubicacio: event.target.value});
   }
 
   render() {

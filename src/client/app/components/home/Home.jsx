@@ -25,8 +25,16 @@ class Home extends React.Component {
         })
     }
 
-    addCentres(centre) {
-        if(centre) this.setState({centres: this.state.centres.concat([centre])});
+    addCentres(centre, index) {
+        if(index) {
+            if(centre) {
+                let centres_aux = this.state.centres;
+                centres_aux[index] = centre;
+                this.setState({centres: centres_aux});
+            }
+        } else {
+            if(centre) this.setState({centres: this.state.centres.concat([centre])});
+        }
     }
 
     render() {

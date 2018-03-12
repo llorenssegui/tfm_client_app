@@ -8,7 +8,9 @@ import AddIcon from 'material-ui-icons/Add';
 import Button from 'material-ui/Button';
 import FormulariCrearCentre from './FormulariCrearCentre.jsx';
 import Notificacio from '../notificacions/Notificacio.jsx';
+import AlertDialog from '../dialogs/AlertDialog.jsx';
 import config from '../../../../../config.js';
+import Utils from '../../utils.jsx';
 
 const styles = theme => ({
     root: {
@@ -25,13 +27,17 @@ const styles = theme => ({
 class Centres extends React.Component {
     state = {
         formulariCrearCentreObert: false,
+        alertDialogObert: false,
         mostrarNotificacio: false,
-        titolCentreCreat: "Centre creat satisfactoriament",
+        titolNotificacio: "Centre creat satisfactoriament",
+        textAlertDialog: "Segur que vols eliminar el centre seleccionat?",
+        titolAlertDialog: "",
         centreSeleccionat: undefined
     };
 
     constructor(props){
         super(props);
+        this.utils = new Utils();
     }
 
     handleFormulari (event) {
@@ -47,7 +53,6 @@ class Centres extends React.Component {
     }
 
     handleCrearCentre (centre) {
-        this.setState({ formulariCrearCentreObert: false });
         let url = config.apiEndpoint + '/centres/';
         if(!centre.professor) centre.professor = this.props.professor;
         fetch(url, {
@@ -59,15 +64,65 @@ class Centres extends React.Component {
         }).then(function(response) {  
             return response.json();
         }).then((centre) => {
-            this.setState({formulariCrearCentreObert:false});
-            this.setState({mostrarNotificacio:true});
+            this.setState({formulariCrearCentreObert:false, 
+                titolNotificacio: "Centre creat satisfactoriament", 
+                mostrarNotificacio:true
+            });
             this.props.onAddCentres(centre);
         });
     }
 
     handleActualitzarCentre(centre) {
-        console.log(centre);
+        let url = config.apiEndpoint + '/centres/' + centre.id + '/';
+        if(!centre.professor) centre.professor = this.props.professor;
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(centre)
+        }).then(function(response) {  
+            return response.json();
+        }).then((centre) => {
+            this.setState({formulariCrearCentreObert: false, 
+                centreSeleccionat: undefined,
+                titolNotificacio: "Centre modificat satisfactoriament",
+                mostrarNotificacio: true
+            });
+            let index = this.utils.getIndexElement(this.props.centres, "id", centre);
+            this.props.onAddCentres(centre,index);
+        });
+    }
+
+    openActualitzarFormCentre(centre) {
         this.setState({formulariCrearCentreObert: true, centreSeleccionat: centre});
+    }
+
+    openDialogBorrarCentre(centre) {
+        this.setState({alertDialogObert: true, centreSeleccionat: centre, titolAlertDialog: centre.nom});
+    }
+
+    tancarAlertDialog() {
+        this.setState({alertDialogObert: false, centreSeleccionat: undefined});
+    }
+
+    borrarCentre() {
+        let url = config.apiEndpoint + '/centres/' + this.state.centreSeleccionat.id + '/';
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {  
+            return response.json();
+        }).then((centre) => {
+            this.setState({alertDialogObert: false, 
+                centreSeleccionat: undefined,
+                titolNotificacio: "Centre eliminat satisfactoriament",
+                mostrarNotificacio: true
+            });
+            let index = this.utils.getIndexElement(this.props.centres, "id", centre);
+        });
     }
 
     render() {
@@ -75,14 +130,16 @@ class Centres extends React.Component {
         return(
             <div className={classes.root}>
                 <Grid container spacing={24}>
-                    {this.props.centres.map(c => {
+                    {this.props.centres.map((c, index) => {
                         return(
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={12} md={6}>
                             <Centre 
                                 id={c.id}
+                                posicio={index}
                                 nom={c.nom}
                                 ubicacio={c.ubicacio}
-                                onEditCentre={this.handleActualitzarCentre.bind(this)}
+                                onEditCentre={this.openActualitzarFormCentre.bind(this)}
+                                onEliminarCentre={this.openDialogBorrarCentre.bind(this)}
                             />
                         </Grid>);
                     })}
@@ -95,10 +152,17 @@ class Centres extends React.Component {
                         onCreateCentre={this.handleCrearCentre.bind(this)}
                         centre={this.state.centreSeleccionat}
                         onUpdateCentre={this.handleActualitzarCentre.bind(this)}
+                    />
+                    <AlertDialog 
+                        open={this.state.alertDialogObert}
+                        titol={this.state.titolAlertDialog}
+                        missatge={this.state.textAlertDialog}
+                        onCloseDialog={this.tancarAlertDialog.bind(this)}
+                        confirmarAccio={this.borrarCentre.bind(this)}
                     />   
                     <Notificacio 
                         open={this.state.mostrarNotificacio}
-                        missatge={this.state.titolCentreCreat}
+                        missatge={this.state.titolNotificacio}
                         onCloseNotificacio={this.tancarNotificacio.bind(this)}
                     />       
                 </Grid>

@@ -124,6 +124,10 @@ class Centres extends React.Component {
         });
     }
 
+    seleccionarcentre(id) {
+        this.props.history.push("/centres/" + id);
+    }
+
     render() {
         const { classes } = this.props;
         return(
@@ -139,6 +143,7 @@ class Centres extends React.Component {
                                 ubicacio={c.ubicacio}
                                 onEditCentre={this.openActualitzarFormCentre.bind(this)}
                                 onEliminarCentre={this.openDialogBorrarCentre.bind(this)}
+                                onSeleccionarCentre={this.seleccionarcentre.bind(this)}
                             />
                         </Grid>);
                     })}

@@ -48,10 +48,14 @@ class Centre extends React.Component {
         this.props.onEliminarCentre(centre);
     }
 
+    clickComponent() {
+        this.props.onSeleccionarCentre(this.props.id);
+    }
+
     render() {
         const { classes } = this.props;
         return(
-            <div>
+            <div onClick={this.clickComponent.bind(this)}>
                 <Paper className={classes.root} elevation={4}>
                     <div>
                     <Grid container spacing={24}>

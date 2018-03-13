@@ -21,7 +21,7 @@ class Home extends React.Component {
         .then((centres) => {
             let id_professor = this.Auth.getProfile().id;
             let filteredCentres = centres.filter((centre) => centre.professor === id_professor);
-            this.setState({ centres: filteredCentres })
+            this.setState({ centres: filteredCentres });
         })
     }
 
@@ -51,6 +51,7 @@ class Home extends React.Component {
                 professor={this.Auth.getProfile().id} 
                 centres={this.state.centres}
                 onBorrarCentre={this.borrarCentre.bind(this)}
+                history={this.props.history}
             />            
         </div>);
     }

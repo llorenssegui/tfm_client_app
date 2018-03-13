@@ -28,8 +28,6 @@ export default class FormulariCrearCentre extends React.Component {
     };
   }
 
-
-
   componentWillReceiveProps(nextProps) {
     let nomCentre = '';
     let ubicacioCentre = '';
@@ -43,15 +41,17 @@ export default class FormulariCrearCentre extends React.Component {
   }
 
   onClickProcessarFormulari() {
-    let centre = {
-      nom: this.state.nom,
-      ubicacio: this.state.ubicacio
-    };
-    if(this.state.modeModificar) {
-      centre.id = this.props.centre.id;
-      this.props.onUpdateCentre(centre);
-    } else {
-      this.props.onCreateCentre(centre);
+    if(this.state.nom !== '' && this.state.ubicacio !== '') {
+      let centre = {
+        nom: this.state.nom,
+        ubicacio: this.state.ubicacio
+      };
+      if(this.state.modeModificar) {
+        centre.id = this.props.centre.id;
+        this.props.onUpdateCentre(centre);
+      } else {
+        this.props.onCreateCentre(centre);
+      }
     }
   }
 

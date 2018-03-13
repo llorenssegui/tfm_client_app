@@ -37,10 +37,21 @@ class Home extends React.Component {
         }
     }
 
+    borrarCentre(index) {
+        let centres_aux = this.state.centres;
+        delete centres_aux[index];
+        this.setState({centres: centres_aux});
+    }
+
     render() {
         return(
         <div>
-            <Centres onAddCentres={this.addCentres.bind(this)} professor={this.Auth.getProfile().id} centres={this.state.centres}/>            
+            <Centres
+                onAddCentres={this.addCentres.bind(this)} 
+                professor={this.Auth.getProfile().id} 
+                centres={this.state.centres}
+                onBorrarCentre={this.borrarCentre.bind(this)}
+            />            
         </div>);
     }
 }

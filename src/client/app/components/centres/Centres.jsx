@@ -113,15 +113,14 @@ class Centres extends React.Component {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(function(response) {  
-            return response.json();
         }).then((centre) => {
+            let index = this.utils.getIndexElement(this.props.centres, "id", this.state.centreSeleccionat);
             this.setState({alertDialogObert: false, 
                 centreSeleccionat: undefined,
                 titolNotificacio: "Centre eliminat satisfactoriament",
                 mostrarNotificacio: true
             });
-            let index = this.utils.getIndexElement(this.props.centres, "id", centre);
+            this.props.onBorrarCentre(index);
         });
     }
 

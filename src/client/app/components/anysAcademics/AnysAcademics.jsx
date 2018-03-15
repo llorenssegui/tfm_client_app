@@ -5,35 +5,49 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import AnyAcademic from '../anyAcademic/AnyAcademic.jsx';
 import config from '../../../../../config.js';
+import Button from 'material-ui/Button';
+import AddIcon from 'material-ui-icons/Add';
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     marginTop: '5%'
   },
+  button: {
+    margin: theme.spacing.unit,
+    position: 'absolute',
+    bottom: theme.spacing.unit * 3,
+    right: theme.spacing.unit * 3,
+    },
 });
 
 class AnysAcademics extends React.Component {
 
+    state = {
+        anysAcademics: [],
+        centre: this.props.match.params.idCentre
+    };
+
     constructor(props) {
         super(props);
-        this.state = {
-            anysAcademics: [],
-            centre: this.props.match.params.idCentre
-        };
+        console.log(this.state);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         let url = config.apiEndpoint + '/anysacademics/';
         fetch(url)
         .then((response) => {
             return response.json()
         })
         .then((anysAcademics) => {
-            let filteredanysAcademics = anysAcademics.filter((anyAcademic) => anyAcademic.centre === this.state.centre);
-            console.log(anysAcademics);
-            this.setState({ anysAcademics: [{id: 1, anyInici: 2017, anyFi: 2018, centre: 1}] });
+            let filteredanysAcademics = anysAcademics.filter((anyAcademic) => anyAcademic.centre == this.props.match.params.idCentre);
+            this.setState({ anysAcademics: filteredanysAcademics, centre: this.props.match.params.idCentre});
+            
         })
+    }
+
+    handleFormulari () {
+
     }
 
     render() {
@@ -45,16 +59,19 @@ class AnysAcademics extends React.Component {
                     </Grid>
                     <Grid item xs={6}>
                     <Grid container spacing={24}>
-                    {this.state.anysAcademics.map((aa) => {
+                    {this.state.anysAcademics.map((aa) => 
                         <Grid item xs={12} sm={6}>
                             <AnyAcademic anyInici={aa.anyInici} anyFi={aa.anyFi}/>
                         </Grid>
-                    })}
+                    )}
                     </Grid>
                     </Grid>
                     <Grid item xs>
                     </Grid>
                 </Grid>
+                <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
+                    <AddIcon />
+                </Button>
             </div>
          );
     }

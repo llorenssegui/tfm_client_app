@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
+import IconaCalendari from '../iconaCalendari/IconaCalendari.jsx';
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -13,6 +14,10 @@ const styles = theme => ({
   textCenter: {
       textAlign: 'center'
   },
+  iconCenter: {
+    textAlign: 'center',
+    marginTop: '3px'
+  }
 });
 
 class AnyAcademic extends React.Component {
@@ -29,6 +34,9 @@ class AnyAcademic extends React.Component {
                 <Typography variant="headline" component="h3" className={classes.textCenter}>
                 {this.props.anyInici} - {this.props.anyFi}
                 </Typography>
+                <div className={classes.iconCenter}>
+                <IconaCalendari />
+                </div>
             </Paper>
             </div>
         )

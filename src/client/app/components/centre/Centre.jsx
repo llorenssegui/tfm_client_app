@@ -13,13 +13,15 @@ const styles = theme => ({
       paddingTop: 16,
       paddingBottom: 16,
       marginTop: theme.spacing.unit * 3,
-      cursor: 'pointer',
     }),
     rightAlign: {
-        textAlign: 'right'
+        textAlign: 'right',
     },
     leftAlign: {
         textAlign: 'left'
+    },
+    pointerCursor: {
+        cursor: 'pointer'
     },
 });
 
@@ -55,7 +57,7 @@ class Centre extends React.Component {
     render() {
         const { classes } = this.props;
         return(
-            <div onClick={this.clickComponent.bind(this)}>
+            <div>
                 <Paper className={classes.root} elevation={4}>
                     <div>
                     <Grid container spacing={24}>
@@ -67,12 +69,14 @@ class Centre extends React.Component {
                         </Grid>
                     </Grid>
                     </div>
-                    <Typography variant="headline" component="h3">
-                    {this.props.nom}
-                    </Typography>
-                    <Typography component="p">
-                    {this.props.ubicacio}
-                    </Typography>
+                    <div className={classes.pointerCursor} onClick={this.clickComponent.bind(this)}>
+                        <Typography variant="headline" component="h3">
+                        {this.props.nom}
+                        </Typography>
+                        <Typography component="p">
+                        {this.props.ubicacio}
+                        </Typography>
+                    </div>
                 </Paper>
             </div>
         );

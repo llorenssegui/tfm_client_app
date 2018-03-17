@@ -15,6 +15,9 @@ const styles = theme => ({
       color: green[200],
     },
   },
+  pointerCursor: {
+    cursor: 'pointer'
+  }
 });
 
 function SvgIconaEditar(props) {
@@ -32,7 +35,7 @@ class IconaEditar extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-                <SvgIconaEditar className={classes.icon}>add_circle</SvgIconaEditar>
+                <span className={classes.pointerCursor}><SvgIconaEditar className={classes.icon}>add_circle</SvgIconaEditar></span>
         );
     }
 }

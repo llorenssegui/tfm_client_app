@@ -27,6 +27,9 @@ const styles = theme => ({
   leftAlign: {
     textAlign: 'left'
   },
+  pointerCursor: {
+    cursor: 'pointer'
+  },
 });
 
 class AnyAcademic extends React.Component {
@@ -59,18 +62,20 @@ class AnyAcademic extends React.Component {
             <div>
             <Paper className={classes.root} elevation={4}>
                 <Grid container spacing={24}>
-                    <Grid onClick={this.handleEditarAnyAcademic.bind(this)} item xs={6} sm={6}>
-                        <IconaEditar />
-                    </Grid>
-                    <Grid onClick={this.handleEliminarAnyAcademic.bind(this)} className={classes.rightAlign} item xs={6} sm={6}>
-                        <IconaEliminar />
-                    </Grid>
+                <Grid onClick={this.handleEditarAnyAcademic.bind(this)} item xs={6} sm={6}>
+                    <IconaEditar />
                 </Grid>
+                <Grid onClick={this.handleEliminarAnyAcademic.bind(this)} className={classes.rightAlign} item xs={6} sm={6}>
+                    <IconaEliminar />
+                </Grid>
+                </Grid>
+                <div className={classes.pointerCursor}>
                 <Typography variant="headline" component="h3" className={classes.textCenter}>
                 {this.props.anyInici} - {this.props.anyFi}
                 </Typography>
                 <div className={classes.iconCenter}>
                 <IconaCalendari />
+                </div>
                 </div>
             </Paper>
             </div>

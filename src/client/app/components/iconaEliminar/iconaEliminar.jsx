@@ -15,6 +15,9 @@ const styles = theme => ({
       color: green[200],
     },
   },
+  pointerCursor: {
+    cursor: 'pointer'
+  },
 });
 
 function SvgIconaEliminar(props) {
@@ -31,7 +34,7 @@ class IconaEliminar extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-                <SvgIconaEliminar className={classes.icon}>add_circle</SvgIconaEliminar>
+                <span className={classes.pointerCursor}><SvgIconaEliminar className={classes.icon}>add_circle</SvgIconaEliminar></span>
         );
     }
 }

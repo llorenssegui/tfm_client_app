@@ -8,6 +8,7 @@ import config from '../../../../../config.js';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 import FormulariCrearAnyAcademic from './FormulariCrearAnyAcademic.jsx';
+import Notificacio from '../notificacions/Notificacio.jsx';
 
 const styles = theme => ({
   root: {
@@ -44,80 +45,77 @@ class AnysAcademics extends React.Component {
         this.setState({ formulariCrearAnyAcademicObert: false });
     }
 
-    handleCrearAnyAcademic (centre) {
+    handleCrearAnyAcademic (anyAcademic) {
         let url = config.apiEndpoint + '/anysacademics/';
-        if(!centre.professor) centre.professor = this.props.professor;
+        if(!anyAcademic.centre) anyAcademic.centre = this.state.centre;
         fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(centre)
+            body: JSON.stringify(anyAcademic)
         }).then(function(response) {  
             return response.json();
-        }).then((centre) => {
-            this.setState({formulariCrearCentreObert:false, 
+        }).then((anyAcademic) => {
+            this.setState({formulariCrearAnyAcademicObert:false, 
                 titolNotificacio: "Any academic creat satisfactoriament", 
-                mostrarNotificacio:true
+                mostrarNotificacio:true,
+                anysAcademics: this.state.anysAcademics.concat([anyAcademic])
             });
-            this.props.onAddCentres(centre);
         });
     }
 
-    handleActualitzarCentre(centre) {
-        let url = config.apiEndpoint + '/centres/' + centre.id + '/';
-        if(!centre.professor) centre.professor = this.props.professor;
+    handleActualitzarAnyAcademic(anyAcademic) {
+        let url = config.apiEndpoint + '/anysacademics/' + anyAcademic.id + '/';
+        if(!anyAcademic.centre) anyAcademic.centre = this.state.centre;
         fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(centre)
+            body: JSON.stringify(anyAcademic)
         }).then(function(response) {  
             return response.json();
-        }).then((centre) => {
-            this.setState({formulariCrearCentreObert: false, 
-                centreSeleccionat: undefined,
-                titolNotificacio: "Centre modificat satisfactoriament",
+        }).then((anyAcademic) => {
+            this.setState({formulariCrearAnyAcademicObert: false, 
+                anyAcademicSeleccionat: undefined,
+                titolNotificacio: "Any acadèmic modificat satisfactoriament",
                 mostrarNotificacio: true
             });
-            let index = this.utils.getIndexElement(this.props.centres, "id", centre);
-            this.props.onAddCentres(centre,index);
+            let index = this.utils.getIndexElement(this.state.anysAcademics, "id", anyAcademic.id);
+            let nousAnysAcademics = this.state.anysAcademics;
+            nousAnysAcademics[index] = anyAcademic;
+            this.setState({
+                anysAcademics: nousAnysAcademics
+            });
         });
     }
 
-    openActualitzarFormCentre(centre) {
-        this.setState({formulariCrearCentreObert: true, centreSeleccionat: centre});
+    openActualitzarFormAnyAcademic(anyAcademic) {
+        this.setState({formulariCrearAnyAcademicObert: true, anyAcademicSeleccionat: anyAcademic});
     }
 
-    openDialogBorrarCentre(centre) {
-        this.setState({alertDialogObert: true, centreSeleccionat: centre, titolAlertDialog: centre.nom});
-    }
 
-    tancarAlertDialog() {
-        this.setState({alertDialogObert: false, centreSeleccionat: undefined});
-    }
-
-    borrarCentre() {
-        let url = config.apiEndpoint + '/centres/' + this.state.centreSeleccionat.id + '/';
+    borrarAnyAcademic() {
+        let url = config.apiEndpoint + '/anysacademics/' + this.state.anyAcademicSeleccionat.id + '/';
         fetch(url, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then((centre) => {
-            let index = this.utils.getIndexElement(this.props.centres, "id", this.state.centreSeleccionat);
+        }).then((cenanyAcademictre) => {
+            //let index = this.utils.getIndexElement(this.props.centres, "id", this.state.anyAcademicSeleccionat);
             this.setState({alertDialogObert: false, 
-                centreSeleccionat: undefined,
-                titolNotificacio: "Centre eliminat satisfactoriament",
+                anyAcademicSeleccionat: undefined,
+                titolNotificacio: "Any acadèmic eliminat satisfactoriament",
                 mostrarNotificacio: true
             });
-            this.props.onBorrarCentre(index);
+            let index = this.utils.getIndexElement(this.state.anysAcademics, "id", anyAcademic.id);
+            let nousAnysAcademics = this.state.anysAcademics;
+            this.setState({
+                anysAcademics: nousAnysAcademics.splice(index, 1)
+            });
         });
-    }
-
-    seleccionarcentre(id) {
-        this.props.history.push("/centres/" + id);
     }
 
     componentDidMount() {
@@ -131,10 +129,6 @@ class AnysAcademics extends React.Component {
             this.setState({ anysAcademics: filteredanysAcademics, centre: this.props.match.params.idCentre});
             
         })
-    }
-
-    handleFormulari () {
-
     }
 
     render() {

@@ -37,7 +37,7 @@ export default class FormulariCrearAnyAcademic extends React.Component {
       anyInici = nextProps.anyAcademic.anyInici;
       anyFi = nextProps.anyAcademic.anyFi;
     }
-    this.setState({anyInici: anyInici, anyInici: anyFi, modeModificar: modeModificar});
+    this.setState({anyInici: anyInici, anyFi: anyFi, modeModificar: modeModificar});
   }
 
   onClickProcessarFormulari() {

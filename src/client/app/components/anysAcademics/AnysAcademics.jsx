@@ -9,6 +9,8 @@ import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 import FormulariCrearAnyAcademic from './FormulariCrearAnyAcademic.jsx';
 import Notificacio from '../notificacions/Notificacio.jsx';
+import Utils from '../../utils.jsx';
+import AlertDialog from '../dialogs/AlertDialog.jsx';
 
 const styles = theme => ({
   root: {
@@ -28,13 +30,16 @@ class AnysAcademics extends React.Component {
     state = {
         anysAcademics: [],
         formulariCrearAnyAcademicObert: false,
+        alertDialogObert: false,
+        textAlertDialog: "Segur que vols eliminar l'any acadèmic seleccionat?",
+        titolAlertDialog: "",
         anyAcademicSeleccionat: undefined,
         centre: this.props.match.params.idCentre
     };
 
     constructor(props) {
         super(props);
-        console.log(this.state);
+        this.utils = new Utils();
     }
 
     handleFormulari (event) {
@@ -82,12 +87,14 @@ class AnysAcademics extends React.Component {
                 titolNotificacio: "Any acadèmic modificat satisfactoriament",
                 mostrarNotificacio: true
             });
-            let index = this.utils.getIndexElement(this.state.anysAcademics, "id", anyAcademic.id);
-            let nousAnysAcademics = this.state.anysAcademics;
-            nousAnysAcademics[index] = anyAcademic;
-            this.setState({
-                anysAcademics: nousAnysAcademics
-            });
+            let index = this.utils.getIndexElement(this.state.anysAcademics, "id", anyAcademic);
+            if(index !== -1) {
+                let nousAnysAcademics = this.state.anysAcademics;
+                nousAnysAcademics[index] = anyAcademic;
+                this.setState({
+                    anysAcademics: nousAnysAcademics
+                });
+            }
         });
     }
 
@@ -95,6 +102,17 @@ class AnysAcademics extends React.Component {
         this.setState({formulariCrearAnyAcademicObert: true, anyAcademicSeleccionat: anyAcademic});
     }
 
+    tancarNotificacio() {
+        this.setState({mostrarNotificacio:false});
+    }
+
+    openDialogBorrarAnyAcademic(anyAcademic) {
+        this.setState({alertDialogObert: true, anyAcademicSeleccionat: anyAcademic, titolAlertDialog: anyAcademic.anyInici + " - " + anyAcademic.anyFi});
+    }
+
+    tancarAlertDialog() {
+        this.setState({alertDialogObert: false, anyAcademicSeleccionat: undefined});
+    }
 
     borrarAnyAcademic() {
         let url = config.apiEndpoint + '/anysacademics/' + this.state.anyAcademicSeleccionat.id + '/';
@@ -103,18 +121,19 @@ class AnysAcademics extends React.Component {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then((cenanyAcademictre) => {
-            //let index = this.utils.getIndexElement(this.props.centres, "id", this.state.anyAcademicSeleccionat);
+        }).then((anyAcademic) => {
+            let index = this.utils.getIndexElement(this.state.anysAcademics, "id", this.state.anyAcademicSeleccionat);
             this.setState({alertDialogObert: false, 
                 anyAcademicSeleccionat: undefined,
                 titolNotificacio: "Any acadèmic eliminat satisfactoriament",
                 mostrarNotificacio: true
             });
-            let index = this.utils.getIndexElement(this.state.anysAcademics, "id", anyAcademic.id);
             let nousAnysAcademics = this.state.anysAcademics;
-            this.setState({
-                anysAcademics: nousAnysAcademics.splice(index, 1)
-            });
+            if(index !== -1) {
+                this.setState({
+                    anysAcademics: nousAnysAcademics.splice(index, 1)
+                });
+            }
         });
     }
 
@@ -142,7 +161,13 @@ class AnysAcademics extends React.Component {
                     <Grid container spacing={24}>
                     {this.state.anysAcademics.map((aa) => 
                         <Grid item xs={12} sm={6}>
-                            <AnyAcademic anyInici={aa.anyInici} anyFi={aa.anyFi}/>
+                            <AnyAcademic 
+                                id={aa.id} 
+                                anyInici={aa.anyInici} 
+                                anyFi={aa.anyFi}
+                                onEditAnyAcademic={this.openActualitzarFormAnyAcademic.bind(this)}
+                                onEliminarAnyAcademic={this.openDialogBorrarAnyAcademic.bind(this)}
+                            />
                         </Grid>
                     )}
                     </Grid>
@@ -159,6 +184,18 @@ class AnysAcademics extends React.Component {
                     onCreateAnyAcademic={this.handleCrearAnyAcademic.bind(this)}
                     anyAcademic={this.state.anyAcademicSeleccionat}
                     onUpdateAnyAcademic={this.handleActualitzarAnyAcademic.bind(this)}
+                />
+                <AlertDialog 
+                    open={this.state.alertDialogObert}
+                    titol={this.state.titolAlertDialog}
+                    missatge={this.state.textAlertDialog}
+                    onCloseDialog={this.tancarAlertDialog.bind(this)}
+                    confirmarAccio={this.borrarAnyAcademic.bind(this)}
+                />
+                <Notificacio 
+                    open={this.state.mostrarNotificacio}
+                    missatge={this.state.titolNotificacio}
+                    onCloseNotificacio={this.tancarNotificacio.bind(this)}
                 />
             </div>
          );

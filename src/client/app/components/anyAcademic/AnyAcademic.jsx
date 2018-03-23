@@ -56,6 +56,10 @@ class AnyAcademic extends React.Component {
         this.props.onEliminarAnyAcademic(anyAcademic);
     }
 
+    clickComponent() {
+        this.props.onSeleccionarAnyAcademic("" + this.props.anyInici + this.props.anyFi, this.props.id);
+    }
+
     render() {
         const { classes } = this.props;
         return (
@@ -69,7 +73,7 @@ class AnyAcademic extends React.Component {
                     <IconaEliminar />
                 </Grid>
                 </Grid>
-                <div className={classes.pointerCursor}>
+                <div className={classes.pointerCursor} onClick={this.clickComponent.bind(this)}>
                 <Typography variant="headline" component="h3" className={classes.textCenter}>
                 {this.props.anyInici} - {this.props.anyFi}
                 </Typography>

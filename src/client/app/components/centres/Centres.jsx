@@ -179,4 +179,4 @@ Centres.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Centres);
+export default withStyles(styles)((Centres));

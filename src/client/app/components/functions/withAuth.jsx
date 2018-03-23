@@ -21,7 +21,7 @@ export default function withAuth(AuthComponent) {
                     this.setState({
                         user: profile
                     })
-                } catch(err){
+                } catch(err) {
                     Auth.logout()
                     this.props.history.replace('/login')
                 }

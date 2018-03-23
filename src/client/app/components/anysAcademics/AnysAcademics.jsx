@@ -145,9 +145,18 @@ class AnysAcademics extends React.Component {
         })
         .then((anysAcademics) => {
             let filteredanysAcademics = anysAcademics.filter((anyAcademic) => anyAcademic.centre == this.props.match.params.idCentre);
+            if(!filteredanysAcademics || filteredanysAcademics.length === 0) this.props.history.replace('/notFound');
             this.setState({ anysAcademics: filteredanysAcademics, centre: this.props.match.params.idCentre});
-            
-        })
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 404) {
+                this.props.history.replace('/notFound');
+            }
+         });
+    }
+
+    seleccionarAnyAcademic(anyAcademic, idAnyAcademic) {
+        this.props.history.push(this.state.centre + "/anyacademic/" + anyAcademic + "/" + idAnyAcademic);
     }
 
     render() {
@@ -167,6 +176,7 @@ class AnysAcademics extends React.Component {
                                 anyFi={aa.anyFi}
                                 onEditAnyAcademic={this.openActualitzarFormAnyAcademic.bind(this)}
                                 onEliminarAnyAcademic={this.openDialogBorrarAnyAcademic.bind(this)}
+                                onSeleccionarAnyAcademic={this.seleccionarAnyAcademic.bind(this)}
                             />
                         </Grid>
                     )}
@@ -204,6 +214,6 @@ class AnysAcademics extends React.Component {
 
 AnysAcademics.propTypes = {
     classes: PropTypes.object.isRequired,
-  };
+};
   
-  export default withStyles(styles)(AnysAcademics);
+export default withStyles(styles)(AnysAcademics);

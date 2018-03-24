@@ -7,7 +7,8 @@ import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import AuthService from '../../services/AuthService.jsx';
 import IconaLogin from '../iconaLogin/iconaLogin.jsx';
-import ResponsiveDialog from '../dialogs/DialogComponent.jsx';
+import DialogComponent from '../dialogs/DialogComponent.jsx';
+import Typography from 'material-ui/Typography';
 
 const styles = theme => ({
     container: {
@@ -35,7 +36,8 @@ const styles = theme => ({
     },
     icon: {
         textAlign: 'center'
-    }
+    },
+    link: theme.typography.button,
 });
 
 class Login extends React.Component {
@@ -85,8 +87,8 @@ class Login extends React.Component {
         const { classes } = this.props;
         return(
             <Grid container spacing={24} className={classes.login_container}>
-            <Grid item md={4} xs={2} />
-            <Grid item md={4} xs={8}>
+            <Grid item md={4} xs={0} />
+            <Grid item md={4} xs={12}>
             <Paper className={classes.paper}>
                 <form onSubmit={this.handleFormSubmit}>
                     <Grid container spacing={24} className={classes.login_container}>
@@ -123,12 +125,17 @@ class Login extends React.Component {
                                 Registre't
                             </Button>
                         </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="caption" gutterBottom align="center">
+                                Has oblidat la contrassenya?
+                            </Typography>
+                        </Grid>
                     </Grid>
                 </form>
             </Paper>
             </Grid>
-            <Grid item md={4} xs={2} />
-            <ResponsiveDialog 
+            <Grid item md={4} xs={0} />
+            <DialogComponent 
                 open={this.state.dialogObert} 
                 missatge="Usuari i contrasenya incorrectes"
                 titol="Error d'autenticació"

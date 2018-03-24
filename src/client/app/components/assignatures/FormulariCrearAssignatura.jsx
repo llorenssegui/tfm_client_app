@@ -6,6 +6,7 @@ import { MenuItem } from 'material-ui/Menu';
 import Input, { InputLabel } from 'material-ui/Input';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import config from '../../../../../config.js';
 
 import Dialog, {
   DialogActions,
@@ -40,9 +41,32 @@ class FormulariCrearAssignatura extends React.Component {
     }
     this.state = {
       curs: curs,
+      cursos: [],
       nom: nom,
       modeModificar: modeModificar
     };
+  }
+
+  obtenirCurssos(callback) {
+    let url = config.apiEndpoint + '/cursos/';
+    fetch(url)
+    .then((response) => {
+        return response.json()
+    })
+    .then((cursos) => {
+        console.log(cursos);
+        this.setState({cursos: cursos});
+        if(callback) callback(this);
+    }).catch(function(error) {
+        const status = error.response ? error.response.status : 500
+        if (status === 404) {
+            this.props.history.replace('/notFound');
+        }
+    });
+  }
+
+  componentWillMount() {
+    this.obtenirCurssos();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -107,16 +131,13 @@ class FormulariCrearAssignatura extends React.Component {
                 value={this.state.curs}
                 onChange={this.onChangeCurs}
                 inputProps={{
-                name: 'curs',
-                id: 'curs-simple',
+                  name: 'curs',
+                  id: 'curs-simple',
                 }}
             >
-                <MenuItem value="">
-                <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {this.props.cursos.map(curs => {
+                  <MenuItem value={curs.id}>{curs.nom}</MenuItem>
+                })}
             </Select>
             </div>
           </DialogContent>

@@ -47,8 +47,24 @@ class Assignatures extends React.Component {
         this.setState({formulariCrearAssignaturaObert: false});
     }
 
-    handleCrearAssignatura() {
-
+    handleCrearAssignatura(assignatura) {
+        let url = config.apiEndpoint + '/assignatures/';
+        if(!assignatura.anyAcademic) assignatura.anyAcademic = this.state.idAnyAcademic;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(assignatura)
+        }).then(function(response) {  
+            return response.json();
+        }).then((assignatura) => {
+            this.setState({formulariCrearAssignaturaObert:false, 
+                titolNotificacio: "Assignatura creada satisfactoriament", 
+                mostrarNotificacio:true,
+                assignatures: this.state.assignatures.concat([assignatura])
+            });
+        });
     }
 
     handleActualitzarAssignatura() {
@@ -168,7 +184,7 @@ class Assignatures extends React.Component {
                         handleClose={this.handleCloseFormulari.bind(this)}
                         onCreateAssignatura={this.handleCrearAssignatura.bind(this)}
                         assignatura={this.state.assignaturaSeleccionada}
-                        cursos={this.obtenirLlistatCursos}
+                        cursos={this.state.cursos}
                         onUpdateAssignatura={this.handleActualitzarAssignatura.bind(this)}
                     />
                     <Notificacio 

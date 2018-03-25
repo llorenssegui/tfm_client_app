@@ -16,12 +16,24 @@ import Dialog, {
 } from 'material-ui/Dialog';
 
 const styles = theme => ({
+    container: {
+      display: 'flex',
+      flexWrap: 'wrap',
+    },
     selectControl: {
       margin: theme.spacing.unit,
       minWidth: 120,
     },
     selectEmpty: {
       marginTop: theme.spacing.unit * 2,
+    },
+    textField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      width: 200,
+    },
+    menu: {
+      width: 200,
     },
 });
 
@@ -30,62 +42,41 @@ class FormulariCrearAssignatura extends React.Component {
   constructor(props) {
     super(props);
     let nom = "";
+    let curs = 0;
     let modeModificar = false;
     if(this.props.assignatura) {
       modeModificar = true;
       nom = this.props.assignatura.nom;
-    }
-    let curs = "";
-    if(this.props.cursos && this.props.cursos.length) {
-        curs = this.props.cursos[0].nom + " " + this.props.cursos[0].nivell;
-    }
+      curs = this.props.assignatura.curs;
+    }   
     this.state = {
       curs: curs,
-      cursos: [],
       nom: nom,
       modeModificar: modeModificar
     };
   }
 
-  obtenirCurssos(callback) {
-    let url = config.apiEndpoint + '/cursos/';
-    fetch(url)
-    .then((response) => {
-        return response.json()
-    })
-    .then((cursos) => {
-        console.log(cursos);
-        this.setState({cursos: cursos});
-        if(callback) callback(this);
-    }).catch(function(error) {
-        const status = error.response ? error.response.status : 500
-        if (status === 404) {
-            this.props.history.replace('/notFound');
-        }
-    });
-  }
-
-  componentWillMount() {
-    this.obtenirCurssos();
-  }
-
   componentWillReceiveProps(nextProps) {
     let nom = "";
+    let curs = 0;
     let modeModificar = false;
     if(nextProps.assignatura) {
       modeModificar = true;
       nom = nextProps.assignatura.nom;
+      curs = nextProps.assignatura.curs;
     }
-    this.setState({nom: nom, modeModificar: modeModificar});
+    this.setState({nom: nom, curs: curs, modeModificar: modeModificar});
   }
 
   onClickProcessarFormulari() {
-    if(this.state.nom && this.state.nom !== "") {
+    if(this.state.curs && this.state.curs != 0 && this.state.nom && this.state.nom !== "") {
       let assignatura = {
-        nom: this.state.nom
+        nom: this.state.nom,
+        curs: this.state.curs
       };
       if(this.state.modeModificar) {
         assignatura.id = this.props.assignatura.id;
+        console.log("Assignatura", assignatura);
         this.props.onUpdateAssignatura(assignatura);
       } else {
         this.props.onCreateAssignatura(assignatura);
@@ -98,7 +89,7 @@ class FormulariCrearAssignatura extends React.Component {
   }
 
   onChangeCurs = event => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({ curs: event.target.value });
   };
 
   render() {
@@ -108,6 +99,7 @@ class FormulariCrearAssignatura extends React.Component {
           open={this.props.open}
           onClose={this.props.handleClose}
           aria-labelledby="form-dialog-title"
+          className={classes.container}
         >
           <DialogTitle id="form-dialog-title">{this.state.modeModificar ? 'Actualitzar Assignatura' : 'Nova Assignatura'}</DialogTitle>
           <DialogContent>
@@ -125,21 +117,28 @@ class FormulariCrearAssignatura extends React.Component {
               onChange={this.onChangeNomAssignaturaInputText.bind(this)}
               fullWidth
             />
-            <div>
-            <InputLabel htmlFor="curs-simple">Curs</InputLabel>
-            <Select
-                value={this.state.curs}
-                onChange={this.onChangeCurs}
-                inputProps={{
-                  name: 'curs',
-                  id: 'curs-simple',
-                }}
+            <TextField
+              id="select-curs-native"
+              select
+              label="Cursos"
+              className={classes.textField}
+              value={this.state.curs}
+              onChange={this.onChangeCurs}
+              SelectProps={{
+                MenuProps: {
+                  native: false,
+                  className: classes.menu,
+                },
+              }}
+              helperText="Selecciona el curs acadèmic de l'assignatura"
+              margin="normal"
             >
-                {this.props.cursos.map(curs => {
-                  <MenuItem value={curs.id}>{curs.nom}</MenuItem>
-                })}
-            </Select>
-            </div>
+              {this.props.cursos.map(option => (
+                <MenuItem key={option.id} value={option.id}>
+                  {option.nom} ({option.nivell})
+                </MenuItem>
+              ))}
+            </TextField>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.props.handleClose} color="primary">

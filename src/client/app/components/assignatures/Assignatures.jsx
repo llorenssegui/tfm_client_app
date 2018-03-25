@@ -68,7 +68,27 @@ class Assignatures extends React.Component {
     }
 
     handleActualitzarAssignatura() {
+        let url = config.apiEndpoint + '/assignatures/';
+        if(!assignatura.anyAcademic) assignatura.anyAcademic = this.state.idAnyAcademic;
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(assignatura)
+        }).then(function(response) {  
+            return response.json();
+        }).then((assignatura) => {
+            this.setState({formulariCrearAssignaturaObert:false, 
+                titolNotificacio: "Assignatura actualitzada satisfactoriament", 
+                mostrarNotificacio:true,
+                assignatures: this.state.assignatures.concat([assignatura])
+            });
+        });
+    }
 
+    openActualitzarFormAssignatura(assignatura) {
+        this.setState({formulariCrearAssignaturaObert: true, assignaturaSeleccionada: assignatura});
     }
 
     tancarAlertDialog() {
@@ -166,6 +186,7 @@ class Assignatures extends React.Component {
                                 posicio={index}
                                 nom={a.nom}
                                 curs={this.obtenirCurs(a.curs)}
+                                onEditAssignatura={this.openActualitzarFormAssignatura.bind(this)}
                             />
                         </Grid>);
                     })}

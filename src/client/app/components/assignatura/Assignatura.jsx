@@ -52,7 +52,11 @@ class Assignatura extends React.Component {
     }
 
     handleEliminarAssignatura() {
-        let assignatura = {};
+        let assignatura = {
+            id: this.props.id,
+            nom: this.props.nom,
+            curs: this.props.curs.id
+        };
         this.props.onEliminarAssignatura(assignatura);
     }
 

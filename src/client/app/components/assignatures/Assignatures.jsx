@@ -37,6 +37,7 @@ class Assignatures extends React.Component {
             textAlertDialog: "Segur que vols eliminar l'assignatura seleccionada?",
             titolAlertDialog: ""
         };
+        this.utils = new Utils();
     }
 
     handleFormulari() {
@@ -45,6 +46,10 @@ class Assignatures extends React.Component {
 
     handleCloseFormulari() {
         this.setState({formulariCrearAssignaturaObert: false});
+    }
+
+    openDialogBorrarAssignatura(assignatura) {
+        this.setState({alertDialogObert: true, assignaturaSeleccionada: assignatura, titolAlertDialog: assignatura.nom});
     }
 
     handleCrearAssignatura(assignatura) {
@@ -67,8 +72,8 @@ class Assignatures extends React.Component {
         });
     }
 
-    handleActualitzarAssignatura() {
-        let url = config.apiEndpoint + '/assignatures/';
+    handleActualitzarAssignatura(assignatura) {
+        let url = config.apiEndpoint + '/assignatures/' + assignatura.id + "/";
         if(!assignatura.anyAcademic) assignatura.anyAcademic = this.state.idAnyAcademic;
         fetch(url, {
             method: 'PUT',
@@ -79,11 +84,19 @@ class Assignatures extends React.Component {
         }).then(function(response) {  
             return response.json();
         }).then((assignatura) => {
-            this.setState({formulariCrearAssignaturaObert:false, 
-                titolNotificacio: "Assignatura actualitzada satisfactoriament", 
-                mostrarNotificacio:true,
-                assignatures: this.state.assignatures.concat([assignatura])
+            this.setState({formulariCrearAssignaturaObert: false, 
+                assignaturaSeleccionada: undefined,
+                titolNotificacio: "Assignatura modificada satisfactoriament",
+                mostrarNotificacio: true
             });
+            let index = this.utils.getIndexElement(this.state.assignatures, "id", assignatura);
+            if(index !== -1) {
+                let novesAssignatures = this.state.assignatures;
+                novesAssignatures[index] = assignatura;
+                this.setState({
+                    assignatures: novesAssignatures
+                });
+            }
         });
     }
 
@@ -95,24 +108,25 @@ class Assignatures extends React.Component {
         this.setState({alertDialogObert: false, assignaturaSeleccionada: undefined});
     }
 
-    borrarAssignatura() {
+    borrarAssignatura(assignatura) {
         let url = config.apiEndpoint + '/assignatures/' + this.state.assignaturaSeleccionada.id + '/';
+        console.log(this.state.assignaturaSeleccionada);
         fetch(url, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then((anyAcademic) => {
+        }).then((assignatura) => {
             let index = this.utils.getIndexElement(this.state.assignatures, "id", this.state.assignaturaSeleccionada);
             this.setState({alertDialogObert: false, 
                 assignaturaSeleccionada: undefined,
                 titolNotificacio: "Assignatura eliminada satisfactoriament",
                 mostrarNotificacio: true
             });
-            let novesAssignatures = this.state.assignatures;
+            let novesAssignatures = this.state.assignatures.splice(index, 1);
             if(index !== -1) {
                 this.setState({
-                    assignatures: novesAssignatures.splice(index, 1)
+                    assignatures: novesAssignatures
                 });
             }
         });
@@ -187,6 +201,7 @@ class Assignatures extends React.Component {
                                 nom={a.nom}
                                 curs={this.obtenirCurs(a.curs)}
                                 onEditAssignatura={this.openActualitzarFormAssignatura.bind(this)}
+                                onEliminarAssignatura={this.openDialogBorrarAssignatura.bind(this)}
                             />
                         </Grid>);
                     })}

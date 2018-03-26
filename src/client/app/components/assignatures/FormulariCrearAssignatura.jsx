@@ -69,14 +69,13 @@ class FormulariCrearAssignatura extends React.Component {
   }
 
   onClickProcessarFormulari() {
-    if(this.state.curs && this.state.curs != 0 && this.state.nom && this.state.nom !== "") {
+    if(this.state && this.state.curs && this.state.curs != 0 && this.state.nom && this.state.nom !== "") {
       let assignatura = {
         nom: this.state.nom,
         curs: this.state.curs
       };
       if(this.state.modeModificar) {
         assignatura.id = this.props.assignatura.id;
-        console.log("Assignatura", assignatura);
         this.props.onUpdateAssignatura(assignatura);
       } else {
         this.props.onCreateAssignatura(assignatura);
@@ -126,7 +125,7 @@ class FormulariCrearAssignatura extends React.Component {
               onChange={this.onChangeCurs}
               SelectProps={{
                 MenuProps: {
-                  native: false,
+                  native: "false",
                   className: classes.menu,
                 },
               }}

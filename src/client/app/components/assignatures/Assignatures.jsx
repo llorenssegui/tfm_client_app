@@ -21,6 +21,9 @@ const styles = theme => ({
         bottom: theme.spacing.unit * 3,
         right: theme.spacing.unit * 3,
     },
+    container: {
+        
+    },
 });
 
 class Assignatures extends React.Component {
@@ -117,23 +120,18 @@ class Assignatures extends React.Component {
                 'Content-Type': 'application/json'
             }
         }).then((assignatura) => {
-            let index = this.utils.getIndexElement(this.state.assignatures, "id", this.state.assignaturaSeleccionada);
+            let novesAssignatures = this.state.assignatures.filter(a => a.id !== this.state.assignaturaSeleccionada.id);
             this.setState({alertDialogObert: false, 
                 assignaturaSeleccionada: undefined,
                 titolNotificacio: "Assignatura eliminada satisfactoriament",
-                mostrarNotificacio: true
+                mostrarNotificacio: true,
+                assignatures: novesAssignatures
             });
-            let novesAssignatures = this.state.assignatures.splice(index, 1);
-            if(index !== -1) {
-                this.setState({
-                    assignatures: novesAssignatures
-                });
-            }
         });
     }
 
     tancarNotificacio () {
-        this.setState({alertDialogObert: false, anyAcademicSeleccionat: undefined});
+        this.setState({mostrarNotificacio: false, anyAcademicSeleccionat: undefined});
     }
 
     obtenirCurssos(callback) {
@@ -191,10 +189,13 @@ class Assignatures extends React.Component {
         const { classes } = this.props;
         return(
             <div className={classes.root}>
+                <Grid container>
+                <Grid item xs={12} sm={2} md={2}></Grid>
+                <Grid item xs={12} sm={8} md={8}>
                 <Grid container spacing={24}>
                     {this.state.assignatures.map((a, index) => {
                         return(
-                        <Grid item xs={12} sm={12} md={6}>
+                        <Grid item xs={12} sm={12} md={4}>
                             <Assignatura 
                                 id={a.id}
                                 posicio={index}
@@ -205,9 +206,6 @@ class Assignatures extends React.Component {
                             />
                         </Grid>);
                     })}
-                    <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
-                        <AddIcon />
-                    </Button> 
                     <AlertDialog 
                         open={this.state.alertDialogObert}
                         titol={this.state.titolAlertDialog}
@@ -229,6 +227,12 @@ class Assignatures extends React.Component {
                         onCloseNotificacio={this.tancarNotificacio.bind(this)}
                     />       
                 </Grid>
+                </Grid>
+                <Grid item xs={12} sm={2} md={2}></Grid>
+                </Grid>
+                <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
+                    <AddIcon />
+                </Button> 
             </div>
         );
     }

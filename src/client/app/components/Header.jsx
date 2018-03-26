@@ -6,14 +6,29 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import LoginIcon from './iconLogin/LoginIcon.jsx';
 import AuthService from '../services/AuthService.jsx';
+import Grid from 'material-ui/Grid';
 
 const styles = {
   root: {
     flexGrow: 1,
   },
+  pointerCursor: {
+    cursor: 'pointer'
+  },
+  marginIcon: {
+      marginRight: '100%'
+  }
 };
 
 class Header extends React.Component {
+
+    constructor(props) {
+        super(props);
+    }
+
+    goHomePage() {
+        window.location = "/";
+    }
 
     Auth = new AuthService();
 
@@ -23,10 +38,16 @@ class Header extends React.Component {
             <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                    <Typography variant="title" color="inherit">
+                    <Grid  xs={12}><Typography 
+                        variant="title" 
+                        color="inherit" 
+                        onClick={this.goHomePage.bind(this)}
+                        className={classes.pointerCursor}
+                    >
                         Teacher Support
-                    </Typography>
-                    {this.Auth.loggedIn() && <LoginIcon /> 
+                    </Typography></Grid>
+
+                    {this.Auth.loggedIn() && <Grid  xs={true}><div className={classes.marginIcon}><LoginIcon /></div></Grid>
                     }    
                     </Toolbar>
                 </AppBar>
@@ -37,6 +58,6 @@ class Header extends React.Component {
 
 Header.propTypes = {
     classes: PropTypes.object.isRequired,
-  };
+};
   
   export default withStyles(styles)(Header);

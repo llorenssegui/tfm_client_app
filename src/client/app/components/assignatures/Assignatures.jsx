@@ -10,6 +10,7 @@ import Notificacio from '../notificacions/Notificacio.jsx';
 import AlertDialog from '../dialogs/AlertDialog.jsx';
 import config from '../../../../../config.js';
 import Utils from '../../utils.jsx';
+import FormulariAssignatura from './FormulariAssignatura.jsx';
 
 const styles = theme => ({
     root: {
@@ -35,19 +36,28 @@ class Assignatures extends React.Component {
             assignatures: [],
             cursos: [],
             assignaturaSeleccionada: undefined,
-            formulariCrearAssignaturaObert: false,
+            formulariEditarAssignaturaObert: false,
             alertDialogObert: false,
             textAlertDialog: "Segur que vols eliminar l'assignatura seleccionada?",
-            titolAlertDialog: ""
+            titolAlertDialog: "",
+            formulariCrearAssignaturaObert: false
         };
         this.utils = new Utils();
     }
 
     handleFormulari() {
-        this.setState({ formulariCrearAssignaturaObert: true, assignaturaSeleccionada: undefined });
+        this.setState({ formulariEditarAssignaturaObert: true, assignaturaSeleccionada: undefined });
+    }
+    
+    handleFormulariCrear() {
+        this.setState({ formulariCrearAssignaturaObert: true });
     }
 
     handleCloseFormulari() {
+        this.setState({formulariEditarAssignaturaObert: false});
+    }
+
+    handleCloseFormulariCrear() {
         this.setState({formulariCrearAssignaturaObert: false});
     }
 
@@ -55,7 +65,37 @@ class Assignatures extends React.Component {
         this.setState({alertDialogObert: true, assignaturaSeleccionada: assignatura, titolAlertDialog: assignatura.nom});
     }
 
-    handleCrearAssignatura(assignatura) {
+    handleCrearAssignatura(assignatura, avaluacions, grups) {
+        this.peticioCrearAssignatura(assignatura, avaluacions, grups, function(assignatura, avaluacions, grups, context) {
+            let id_curs = assignatura.curs;
+            let id_assignatura = assignatura.id;
+            for(let i = 0; i < grups.length; i++) {
+                let grup = {
+                    nom: grups[i].label,
+                    curs: id_curs
+                };
+                context.peticioCrearGrup(grup, function(grup, context) {
+
+                });
+            }
+            for(let i = 0; i < avaluacions.length; i++) {
+                let avaluacio = {
+                    nom: avaluacions[i].label,
+                    assignatura: id_assignatura
+                };
+                context.peticioCrearAvaluacio(avaluacio, function(avaluacio, context) {
+                    
+                });
+            }
+            context.setState({formulariCrearAssignaturaObert:false, 
+                titolNotificacio: "Assignatura creada satisfactoriament", 
+                mostrarNotificacio:true,
+                assignatures: this.state.assignatures.concat([assignatura])
+            });
+        });
+    }
+
+    peticioCrearAssignatura(assignatura, avaluacions, grups, callback) {
         let url = config.apiEndpoint + '/assignatures/';
         if(!assignatura.anyAcademic) assignatura.anyAcademic = this.state.idAnyAcademic;
         fetch(url, {
@@ -66,12 +106,39 @@ class Assignatures extends React.Component {
             body: JSON.stringify(assignatura)
         }).then(function(response) {  
             return response.json();
-        }).then((assignatura) => {
-            this.setState({formulariCrearAssignaturaObert:false, 
-                titolNotificacio: "Assignatura creada satisfactoriament", 
-                mostrarNotificacio:true,
-                assignatures: this.state.assignatures.concat([assignatura])
-            });
+        }).then((assignaturaN) => {
+            console.log(avaluacions);
+            callback(assignaturaN, avaluacions, grups, this);
+        });
+    }
+
+    peticioCrearGrup(grup, callback) {
+        let url = config.apiEndpoint + '/grups/';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(grup)
+        }).then(function(response) {  
+            return response.json();
+        }).then((grup) => {
+            callback(grup, this);
+        });
+    }
+
+    peticioCrearAvaluacio(avaluacio, callback) {
+        let url = config.apiEndpoint + '/trimestres/';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(avaluacio)
+        }).then(function(response) {  
+            return response.json();
+        }).then((avaluacio) => {
+            callback(avaluacio, this);
         });
     }
 
@@ -87,7 +154,7 @@ class Assignatures extends React.Component {
         }).then(function(response) {  
             return response.json();
         }).then((assignatura) => {
-            this.setState({formulariCrearAssignaturaObert: false, 
+            this.setState({formulariEditarAssignaturaObert: false, 
                 assignaturaSeleccionada: undefined,
                 titolNotificacio: "Assignatura modificada satisfactoriament",
                 mostrarNotificacio: true
@@ -104,7 +171,7 @@ class Assignatures extends React.Component {
     }
 
     openActualitzarFormAssignatura(assignatura) {
-        this.setState({formulariCrearAssignaturaObert: true, assignaturaSeleccionada: assignatura});
+        this.setState({formulariEditarAssignaturaObert: true, assignaturaSeleccionada: assignatura});
     }
 
     tancarAlertDialog() {
@@ -170,6 +237,25 @@ class Assignatures extends React.Component {
         });
     }
 
+    obtenirAnyAcademic(callback) {
+        let url = config.apiEndpoint + '/anysacademics/' + this.state.idAnyAcademic + '/';
+        fetch(url)
+        .then((response) => {
+            return response.json()
+        })
+        .then((assignatura) => {
+            if(!assignatura || assignatura.centre !== Number(this.props.match.params.idCentre)) { 
+                this.props.history.replace('/notFound');
+            }
+            if(callback) callback(this);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 404) {
+                this.props.history.replace('/notFound');
+            }
+        });
+    }
+
     obtenirCurs(idCurs) {
         let curs = this.state.cursos.filter((curs) => curs.id == idCurs)[0];
         return curs;
@@ -180,9 +266,11 @@ class Assignatures extends React.Component {
     }
 
     componentDidMount() {
-        this.obtenirCurssos(function (context) {
-            context.obtenirAssignatures();
-        });
+        this.obtenirAnyAcademic(function(context){
+            context.obtenirCurssos(function (context) {
+                context.obtenirAssignatures();
+            });
+        });     
     }
 
     render() {
@@ -214,12 +302,18 @@ class Assignatures extends React.Component {
                         confirmarAccio={this.borrarAssignatura.bind(this)}
                     /> 
                     <FormulariCrearAssignatura
-                        open={this.state.formulariCrearAssignaturaObert}
+                        open={this.state.formulariEditarAssignaturaObert}
                         handleClose={this.handleCloseFormulari.bind(this)}
                         onCreateAssignatura={this.handleCrearAssignatura.bind(this)}
                         assignatura={this.state.assignaturaSeleccionada}
                         cursos={this.state.cursos}
                         onUpdateAssignatura={this.handleActualitzarAssignatura.bind(this)}
+                    />
+                    <FormulariAssignatura 
+                        open={this.state.formulariCrearAssignaturaObert}
+                        close={this.handleCloseFormulariCrear.bind(this)}
+                        cursos={this.state.cursos}
+                        onCreate={this.handleCrearAssignatura.bind(this)}
                     />
                     <Notificacio 
                         open={this.state.mostrarNotificacio}
@@ -230,7 +324,7 @@ class Assignatures extends React.Component {
                 </Grid>
                 <Grid item xs={12} sm={2} md={2}></Grid>
                 </Grid>
-                <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
+                <Button onClick={this.handleFormulariCrear.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                     <AddIcon />
                 </Button> 
             </div>

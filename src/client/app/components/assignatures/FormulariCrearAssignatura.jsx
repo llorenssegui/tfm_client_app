@@ -52,7 +52,8 @@ class FormulariCrearAssignatura extends React.Component {
     this.state = {
       curs: curs,
       nom: nom,
-      modeModificar: modeModificar
+      modeModificar: modeModificar,
+      trimestres: []
     };
   }
 

@@ -5,11 +5,19 @@ import NoTrobat from './notrobat/NoTrobat.jsx';
 import Assignatures from './assignatures/Assignatures.jsx';
 import AnysAcademics from './anysAcademics/AnysAcademics.jsx';
 import { BrowserRouter, Router, Route, Switch } from 'react-router-dom';
+import withAuth from './functions/withAuth.jsx';
+
+var globarProps = undefined;
 
 class Main extends React.Component {
     /* <Route component={NoTrobat}/>  - {this.props.match.params.idCentre}*/
 
     state = {}
+
+    constructor(props) {
+        super(props);
+        globarProps = this.props;
+    }
 
     render() {
         return (
@@ -27,4 +35,4 @@ class Main extends React.Component {
     }
 }
 
-export default Main;
+export default (Main);

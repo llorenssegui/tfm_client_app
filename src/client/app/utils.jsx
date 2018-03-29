@@ -12,4 +12,13 @@ export default class Utils {
         }
         return -1;
     }
+
+    normalizeString(string) {
+        let newString = string;
+        if(newString) {
+            newString = newString.toLowerCase();
+            newString = newString.replace(" ", "");
+        }
+        return newString;
+    }
 }

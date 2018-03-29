@@ -11,6 +11,7 @@ import FormulariCrearAnyAcademic from './FormulariCrearAnyAcademic.jsx';
 import Notificacio from '../notificacions/Notificacio.jsx';
 import Utils from '../../utils.jsx';
 import AlertDialog from '../dialogs/AlertDialog.jsx';
+import FormulariGrups from './FormulariGrups.jsx';
 
 const styles = theme => ({
   root: {
@@ -184,6 +185,9 @@ class AnysAcademics extends React.Component {
                     </Grid>
                     <Grid item xs>
                     </Grid>
+                <Grid item xs={12}>
+                    <FormulariGrups centre={this.state.centre}/>
+                </Grid>
                 </Grid>
                 <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                     <AddIcon />

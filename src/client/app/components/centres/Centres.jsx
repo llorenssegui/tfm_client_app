@@ -11,6 +11,7 @@ import Notificacio from '../notificacions/Notificacio.jsx';
 import AlertDialog from '../dialogs/AlertDialog.jsx';
 import config from '../../../../../config.js';
 import Utils from '../../utils.jsx';
+import AuthService from '../../services/AuthService.jsx';
 
 const styles = theme => ({
     root: {
@@ -38,6 +39,7 @@ class Centres extends React.Component {
     constructor(props){
         super(props);
         this.utils = new Utils();
+        this.Auth = new AuthService();
     }
 
     handleFormulari (event) {
@@ -58,17 +60,29 @@ class Centres extends React.Component {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
             },
             body: JSON.stringify(centre)
         }).then(function(response) {  
-            return response.json();
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         }).then((centre) => {
-            this.setState({formulariCrearCentreObert:false, 
-                titolNotificacio: "Centre creat satisfactoriament", 
-                mostrarNotificacio:true
-            });
-            this.props.onAddCentres(centre);
+            if (centre) {
+                this.setState({formulariCrearCentreObert:false, 
+                    titolNotificacio: "Centre creat satisfactoriament", 
+                    mostrarNotificacio:true
+                });
+                this.props.onAddCentres(centre);
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
         });
     }
 
@@ -78,19 +92,31 @@ class Centres extends React.Component {
         fetch(url, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
             },
             body: JSON.stringify(centre)
         }).then(function(response) {  
-            return response.json();
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         }).then((centre) => {
-            this.setState({formulariCrearCentreObert: false, 
-                centreSeleccionat: undefined,
-                titolNotificacio: "Centre modificat satisfactoriament",
-                mostrarNotificacio: true
-            });
-            let index = this.utils.getIndexElement(this.props.centres, "id", centre);
-            this.props.onAddCentres(centre,index);
+            if(centre) {
+                this.setState({formulariCrearCentreObert: false, 
+                    centreSeleccionat: undefined,
+                    titolNotificacio: "Centre modificat satisfactoriament",
+                    mostrarNotificacio: true
+                });
+                let index = this.utils.getIndexElement(this.props.centres, "id", centre);
+                this.props.onAddCentres(centre,index);
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
         });
     }
 
@@ -111,16 +137,30 @@ class Centres extends React.Component {
         fetch(url, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        }).then(response => {
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
             }
         }).then((centre) => {
-            let index = this.utils.getIndexElement(this.props.centres, "id", this.state.centreSeleccionat);
-            this.setState({alertDialogObert: false, 
-                centreSeleccionat: undefined,
-                titolNotificacio: "Centre eliminat satisfactoriament",
-                mostrarNotificacio: true
-            });
-            this.props.onBorrarCentre(index);
+            if (centre) {
+                let index = this.utils.getIndexElement(this.props.centres, "id", this.state.centreSeleccionat);
+                this.setState({alertDialogObert: false, 
+                    centreSeleccionat: undefined,
+                    titolNotificacio: "Centre eliminat satisfactoriament",
+                    mostrarNotificacio: true
+                });
+                this.props.onBorrarCentre(index);
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
         });
     }
 

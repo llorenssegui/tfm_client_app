@@ -11,6 +11,7 @@ import AlertDialog from '../dialogs/AlertDialog.jsx';
 import config from '../../../../../config.js';
 import Utils from '../../utils.jsx';
 import FormulariAssignatura from './FormulariAssignatura.jsx';
+import AuthService from '../../services/AuthService.jsx';
 
 const styles = theme => ({
     root: {
@@ -43,6 +44,7 @@ class Assignatures extends React.Component {
             formulariCrearAssignaturaObert: false
         };
         this.utils = new Utils();
+        this.Auth = new AuthService();
     }
 
     handleFormulari() {
@@ -101,14 +103,23 @@ class Assignatures extends React.Component {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
             },
             body: JSON.stringify(assignatura)
         }).then(function(response) {  
-            return response.json();
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         }).then((assignaturaN) => {
-            console.log(avaluacions);
-            callback(assignaturaN, avaluacions, grups, this);
+            if(assignaturaN) callback(assignaturaN, avaluacions, grups, this);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
         });
     }
 
@@ -117,13 +128,23 @@ class Assignatures extends React.Component {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
             },
             body: JSON.stringify(grup)
         }).then(function(response) {  
-            return response.json();
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         }).then((grup) => {
-            callback(grup, this);
+            if(grup) callback(grup, this);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
         });
     }
 
@@ -132,13 +153,23 @@ class Assignatures extends React.Component {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
             },
             body: JSON.stringify(avaluacio)
         }).then(function(response) {  
-            return response.json();
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         }).then((avaluacio) => {
-            callback(avaluacio, this);
+            if (avaluacio) callback(avaluacio, this);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
         });
     }
 
@@ -148,24 +179,36 @@ class Assignatures extends React.Component {
         fetch(url, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
             },
             body: JSON.stringify(assignatura)
         }).then(function(response) {  
-            return response.json();
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         }).then((assignatura) => {
-            this.setState({formulariEditarAssignaturaObert: false, 
-                assignaturaSeleccionada: undefined,
-                titolNotificacio: "Assignatura modificada satisfactoriament",
-                mostrarNotificacio: true
-            });
-            let index = this.utils.getIndexElement(this.state.assignatures, "id", assignatura);
-            if(index !== -1) {
-                let novesAssignatures = this.state.assignatures;
-                novesAssignatures[index] = assignatura;
-                this.setState({
-                    assignatures: novesAssignatures
+            if(assignatura) {
+                this.setState({formulariEditarAssignaturaObert: false, 
+                    assignaturaSeleccionada: undefined,
+                    titolNotificacio: "Assignatura modificada satisfactoriament",
+                    mostrarNotificacio: true
                 });
+                let index = this.utils.getIndexElement(this.state.assignatures, "id", assignatura);
+                if(index !== -1) {
+                    let novesAssignatures = this.state.assignatures;
+                    novesAssignatures[index] = assignatura;
+                    this.setState({
+                        assignatures: novesAssignatures
+                    });
+                }
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
             }
         });
     }
@@ -184,16 +227,30 @@ class Assignatures extends React.Component {
         fetch(url, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        }).then(response => {
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
             }
         }).then((assignatura) => {
-            let novesAssignatures = this.state.assignatures.filter(a => a.id !== this.state.assignaturaSeleccionada.id);
-            this.setState({alertDialogObert: false, 
-                assignaturaSeleccionada: undefined,
-                titolNotificacio: "Assignatura eliminada satisfactoriament",
-                mostrarNotificacio: true,
-                assignatures: novesAssignatures
-            });
+            if (assignatura) {
+                let novesAssignatures = this.state.assignatures.filter(a => a.id !== this.state.assignaturaSeleccionada.id);
+                this.setState({alertDialogObert: false, 
+                    assignaturaSeleccionada: undefined,
+                    titolNotificacio: "Assignatura eliminada satisfactoriament",
+                    mostrarNotificacio: true,
+                    assignatures: novesAssignatures
+                });
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
         });
     }
 
@@ -203,55 +260,86 @@ class Assignatures extends React.Component {
 
     obtenirCurssos(callback) {
         let url = config.apiEndpoint + '/cursos/';
-        fetch(url)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        })
         .then((response) => {
-            return response.json()
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         })
         .then((cursos) => {
-            this.setState({cursos: cursos});
-            if(callback) callback(this);
+            if(cursos) {
+                this.setState({cursos: cursos});
+                if(callback) callback(this);
+            }
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
             if (status === 404) {
-                this.props.history.replace('/notFound');
+                this.props.history.replace('/login');
             }
         });
     }
 
     obtenirAssignatures(callback) {
         let url = config.apiEndpoint + '/assignatures/';
-        fetch(url)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        })
         .then((response) => {
-            return response.json()
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         })
         .then((assignatures) => {
-            let filteredassignatures = assignatures.filter((assignatura) => assignatura.anyAcademic == this.state.idAnyAcademic);
-            if(!filteredassignatures || filteredassignatures.length === 0) this.props.history.replace('/notFound');
-            this.setState({ assignatures: filteredassignatures});
-            if(callback) callback(this);
+            if (assignatures) {
+                let filteredassignatures = assignatures.filter((assignatura) => assignatura.anyAcademic == this.state.idAnyAcademic);
+                if(!filteredassignatures || filteredassignatures.length === 0) this.props.history.replace('/notFound');
+                this.setState({ assignatures: filteredassignatures});
+                if(callback) callback(this);
+            }
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
             if (status === 404) {
-                this.props.history.replace('/notFound');
+                this.props.history.replace('/login');
             }
         });
     }
 
     obtenirAnyAcademic(callback) {
         let url = config.apiEndpoint + '/anysacademics/' + this.state.idAnyAcademic + '/';
-        fetch(url)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        })
         .then((response) => {
-            return response.json()
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         })
         .then((assignatura) => {
-            if(!assignatura || assignatura.centre !== Number(this.props.match.params.idCentre)) { 
-                this.props.history.replace('/notFound');
-            }
             if(callback) callback(this);
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
             if (status === 404) {
-                this.props.history.replace('/notFound');
+                this.props.history.replace('/login');
             }
         });
     }

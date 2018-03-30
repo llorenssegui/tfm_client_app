@@ -12,6 +12,7 @@ import Notificacio from '../notificacions/Notificacio.jsx';
 import Utils from '../../utils.jsx';
 import AlertDialog from '../dialogs/AlertDialog.jsx';
 import FormulariGrups from './FormulariGrups.jsx';
+import AuthService from '../../services/AuthService.jsx';
 
 const styles = theme => ({
   root: {
@@ -44,6 +45,7 @@ class AnysAcademics extends React.Component {
     constructor(props) {
         super(props);
         this.utils = new Utils();
+        this.Auth = new AuthService();
     }
 
     handleFormulari (event) {
@@ -60,18 +62,30 @@ class AnysAcademics extends React.Component {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
             },
             body: JSON.stringify(anyAcademic)
         }).then(function(response) {  
-            return response.json();
+            if(response.status === 200) {
+                return response.json()
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         }).then((anyAcademic) => {
-            this.setState({formulariCrearAnyAcademicObert:false, 
-                titolNotificacio: "Any academic creat satisfactoriament", 
-                mostrarNotificacio:true,
-                anysAcademics: this.state.anysAcademics.concat([anyAcademic])
-            });
-        });
+            if(anyAcademic) {
+                this.setState({formulariCrearAnyAcademicObert:false, 
+                    titolNotificacio: "Any academic creat satisfactoriament", 
+                    mostrarNotificacio:true,
+                    anysAcademics: this.state.anysAcademics.concat([anyAcademic])
+                });
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+         });
     }
 
     handleActualitzarAnyAcademic(anyAcademic) {
@@ -80,26 +94,38 @@ class AnysAcademics extends React.Component {
         fetch(url, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
             },
             body: JSON.stringify(anyAcademic)
         }).then(function(response) {  
-            return response.json();
-        }).then((anyAcademic) => {
-            this.setState({formulariCrearAnyAcademicObert: false, 
-                anyAcademicSeleccionat: undefined,
-                titolNotificacio: "Any acadèmic modificat satisfactoriament",
-                mostrarNotificacio: true
-            });
-            let index = this.utils.getIndexElement(this.state.anysAcademics, "id", anyAcademic);
-            if(index !== -1) {
-                let nousAnysAcademics = this.state.anysAcademics;
-                nousAnysAcademics[index] = anyAcademic;
-                this.setState({
-                    anysAcademics: nousAnysAcademics
-                });
+            if(response.status === 200) {
+                return response.json()
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
             }
-        });
+        }).then((anyAcademic) => {
+            if(anyAcademic) {
+                this.setState({formulariCrearAnyAcademicObert: false, 
+                    anyAcademicSeleccionat: undefined,
+                    titolNotificacio: "Any acadèmic modificat satisfactoriament",
+                    mostrarNotificacio: true
+                });
+                let index = this.utils.getIndexElement(this.state.anysAcademics, "id", anyAcademic);
+                if(index !== -1) {
+                    let nousAnysAcademics = this.state.anysAcademics;
+                    nousAnysAcademics[index] = anyAcademic;
+                    this.setState({
+                        anysAcademics: nousAnysAcademics
+                    });
+                }
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+         });
     }
 
     openActualitzarFormAnyAcademic(anyAcademic) {
@@ -123,7 +149,14 @@ class AnysAcademics extends React.Component {
         fetch(url, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        }).then(response => {
+            if(response.status === 200) {
+                return response.json()
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
             }
         }).then((anyAcademic) => {
             let index = this.utils.getIndexElement(this.state.anysAcademics, "id", this.state.anyAcademicSeleccionat);
@@ -138,23 +171,41 @@ class AnysAcademics extends React.Component {
                     anysAcademics: nousAnysAcademics.splice(index, 1)
                 });
             }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
         });
     }
 
     componentDidMount() {
         let url = config.apiEndpoint + '/anysacademics/';
-        fetch(url)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken() || ""
+            }
+        })
         .then((response) => {
-            return response.json()
+            if(response.status === 200) {
+                return response.json()
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         })
         .then((anysAcademics) => {
-            let filteredanysAcademics = anysAcademics.filter((anyAcademic) => anyAcademic.centre == this.props.match.params.idCentre);
-            if(!filteredanysAcademics || filteredanysAcademics.length === 0) this.props.history.replace('/notFound');
-            this.setState({ anysAcademics: filteredanysAcademics, centre: this.props.match.params.idCentre});
+            if(anysAcademics) {
+                let filteredanysAcademics = anysAcademics.filter((anyAcademic) => anyAcademic.centre == this.props.match.params.idCentre);
+                if(!filteredanysAcademics || filteredanysAcademics.length === 0) this.props.history.replace('/notFound');
+                this.setState({ anysAcademics: filteredanysAcademics, centre: this.props.match.params.idCentre});
+            }
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
-            if (status === 404) {
-                this.props.history.replace('/notFound');
+            console.log(error);
+            if (status === 401) {
+                this.props.history.replace('/login');
             }
          });
     }

@@ -17,6 +17,7 @@ import { MenuItem } from 'material-ui/Menu';
 import Grid from 'material-ui/Grid';
 import ChipsArray from '../chipsArray/ChipsArray.jsx';
 import config from '../../../../../config.js';
+import AuthService from '../../services/AuthService.jsx';
 
 const styles = theme => ({
   root: {
@@ -73,6 +74,7 @@ class FormulariGrups extends React.Component {
           grups: [],
           grup: "",
         };
+        this.Auth = new AuthService();
     }
 
     onChangeCurs = event => {
@@ -98,11 +100,22 @@ class FormulariGrups extends React.Component {
 
     componentWillMount () {
         let url = config.apiEndpoint + '/cursos/';
-        fetch(url)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        })
         .then((response) => {
-            return response.json()
+          if(response.status === 200) {
+            return response.json();
+          } else if (response.status === 401) {
+              this.props.history.replace('/login');
+          }
         })
         .then((cursos) => {
+          if(cursos) {
             let curs = 0;
             if(cursos && cursos.length > 0) {
               curs = cursos[0].id;
@@ -119,23 +132,40 @@ class FormulariGrups extends React.Component {
                 buildChipsGrups.push(chip);
               }
               context.setState({ grups: buildChipsGrups });
-          });
+            });
+          }
         }).catch(function(error) {
-            
-        });
+          const status = error.response ? error.response.status : 500
+          if (status === 401) {
+              this.props.history.replace('/login');
+          }
+       });
     }
 
     requestGrups (callback) {
       let url = config.apiEndpoint + '/grups/';
-        fetch(url)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        })
         .then((response) => {
-            return response.json()
+          if(response.status === 200) {
+            return response.json();
+          } else if (response.status === 401) {
+              this.props.history.replace('/login');
+          }
         })
         .then((grups) => {
-            callback(grups, this);
+            if(grups) callback(grups, this);
         }).catch(function(error) {
-            
-        });
+          const status = error.response ? error.response.status : 500
+          if (status === 401) {
+              this.props.history.replace('/login');
+          }
+       });
     }
 
     requestPOSTGrup (grup, callback) {
@@ -144,14 +174,24 @@ class FormulariGrups extends React.Component {
       fetch(url, {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': this.Auth.getToken()
           },
           body: JSON.stringify(grup)
-      }).then(function(response) {  
+      }).then(function(response) { 
+        if(response.status === 200) {
           return response.json();
+        } else if (response.status === 401) {
+            this.props.history.replace('/login');
+        }
       }).then((grup) => {
-          callback(grup, this);
-      });
+          if(grup) callback(grup, this);
+      }).catch(function(error) {
+        const status = error.response ? error.response.status : 500
+        if (status === 401) {
+            this.props.history.replace('/login');
+        }
+     });
     }
 
     requestDELETEGrup(grup, callback) {
@@ -159,10 +199,22 @@ class FormulariGrups extends React.Component {
       fetch(url, {
           method: 'DELETE',
           headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': this.Auth.getToken()
           }
+      }).then(response => {
+        if(response.status === 200) {
+          return response.json();
+        } else if (response.status === 401) {
+            this.props.history.replace('/login');
+        }
       }).then((_grup) => {
           callback(grup.key, this);
+      }).catch(function(error) {
+        const status = error.response ? error.response.status : 500
+        if (status === 401) {
+            this.props.history.replace('/login');
+        }
       });
     }
 

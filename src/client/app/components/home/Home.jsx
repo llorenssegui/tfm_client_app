@@ -14,16 +14,33 @@ class Home extends React.Component {
 
     componentWillMount() {
         let url = config.apiEndpoint + '/centres/';
-        fetch(url)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        })
         .then((response) => {
-            return response.json()
+            if(response.status === 200) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
         })
         .then((centres) => {
-            let id_professor = this.Auth.getProfile().id;
-            let filteredCentres = centres.filter((centre) => centre.professor === id_professor);
-            if(!filteredCentres || filteredCentres.length === 0) this.props.history.replace('/notFound');
-            this.setState({ centres: filteredCentres });
-        })
+            if (centres) {
+                let id_professor = this.Auth.getProfile().id;
+                let filteredCentres = centres.filter((centre) => centre.professor === id_professor);
+                if(!filteredCentres || filteredCentres.length === 0) this.props.history.replace('/notFound');
+                this.setState({ centres: filteredCentres });
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+        });
     }
 
     addCentres(centre, index) {

@@ -38,7 +38,7 @@ class AuthService {
         try {
             const decoded = decode(token);
             if (decoded.exp < Date.now() / 1000) { // Checking if token is expired. N
-                this.isLogin = false;
+                this.logout();
                 return true;
             }
             else

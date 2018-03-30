@@ -142,6 +142,12 @@ class FormulariAssignatura extends React.Component {
     this.setState({grups: nousGrups});
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.cursos && nextProps.cursos.length > 0) {
+      this.setState({curs: nextProps.cursos[0].id});
+    }
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -185,7 +191,7 @@ class FormulariAssignatura extends React.Component {
                 <TextField
                 id="select-curs-native"
                 select
-                label="Cursos"
+                label="Curs"
                 className={classes.textField}
                 value={this.state.curs}
                 onChange={this.onChangeCurs}

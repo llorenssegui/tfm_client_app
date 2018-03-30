@@ -23,7 +23,10 @@ const styles = theme => ({
     position: 'absolute',
     bottom: theme.spacing.unit * 3,
     right: theme.spacing.unit * 3,
-    },
+  },
+  formulariGrupContainer: {
+    marginTop: '1%'
+  }
 });
 
 class AnysAcademics extends React.Component {
@@ -163,54 +166,58 @@ class AnysAcademics extends React.Component {
     render() {
         const { classes } = this.props;
         return(
-            <div className={classes.root}>
-                <Grid container spacing={24}>
-                    <Grid item xs>
-                    </Grid>
-                    <Grid item xs={6}>
+            <div>
+                <Grid item xs={12} className={classes.formulariGrupContainer}>
+                    <FormulariGrups 
+                        centre={this.state.centre}
+                    />
+                </Grid>
+                <div className={classes.root}>
                     <Grid container spacing={24}>
-                    {this.state.anysAcademics.map((aa) => 
-                        <Grid item xs={12} sm={6}>
-                            <AnyAcademic 
-                                id={aa.id} 
-                                anyInici={aa.anyInici} 
-                                anyFi={aa.anyFi}
-                                onEditAnyAcademic={this.openActualitzarFormAnyAcademic.bind(this)}
-                                onEliminarAnyAcademic={this.openDialogBorrarAnyAcademic.bind(this)}
-                                onSeleccionarAnyAcademic={this.seleccionarAnyAcademic.bind(this)}
-                            />
+                        <Grid item xs>
                         </Grid>
-                    )}
+                        <Grid item xs={6}>
+                        <Grid container spacing={24}>
+                        {this.state.anysAcademics.map((aa) => 
+                            <Grid item xs={12} sm={6}>
+                                <AnyAcademic 
+                                    id={aa.id} 
+                                    anyInici={aa.anyInici} 
+                                    anyFi={aa.anyFi}
+                                    onEditAnyAcademic={this.openActualitzarFormAnyAcademic.bind(this)}
+                                    onEliminarAnyAcademic={this.openDialogBorrarAnyAcademic.bind(this)}
+                                    onSeleccionarAnyAcademic={this.seleccionarAnyAcademic.bind(this)}
+                                />
+                            </Grid>
+                        )}
+                        </Grid>
+                        </Grid>
+                        <Grid item xs>
+                        </Grid>
                     </Grid>
-                    </Grid>
-                    <Grid item xs>
-                    </Grid>
-                <Grid item xs={12}>
-                    <FormulariGrups centre={this.state.centre}/>
-                </Grid>
-                </Grid>
-                <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
-                    <AddIcon />
-                </Button>
-                <FormulariCrearAnyAcademic 
-                    open={this.state.formulariCrearAnyAcademicObert}
-                    handleClose={this.handleCloseFormulari.bind(this)}
-                    onCreateAnyAcademic={this.handleCrearAnyAcademic.bind(this)}
-                    anyAcademic={this.state.anyAcademicSeleccionat}
-                    onUpdateAnyAcademic={this.handleActualitzarAnyAcademic.bind(this)}
-                />
-                <AlertDialog 
-                    open={this.state.alertDialogObert}
-                    titol={this.state.titolAlertDialog}
-                    missatge={this.state.textAlertDialog}
-                    onCloseDialog={this.tancarAlertDialog.bind(this)}
-                    confirmarAccio={this.borrarAnyAcademic.bind(this)}
-                />
-                <Notificacio 
-                    open={this.state.mostrarNotificacio}
-                    missatge={this.state.titolNotificacio}
-                    onCloseNotificacio={this.tancarNotificacio.bind(this)}
-                />
+                    <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
+                        <AddIcon />
+                    </Button>
+                    <FormulariCrearAnyAcademic 
+                        open={this.state.formulariCrearAnyAcademicObert}
+                        handleClose={this.handleCloseFormulari.bind(this)}
+                        onCreateAnyAcademic={this.handleCrearAnyAcademic.bind(this)}
+                        anyAcademic={this.state.anyAcademicSeleccionat}
+                        onUpdateAnyAcademic={this.handleActualitzarAnyAcademic.bind(this)}
+                    />
+                    <AlertDialog 
+                        open={this.state.alertDialogObert}
+                        titol={this.state.titolAlertDialog}
+                        missatge={this.state.textAlertDialog}
+                        onCloseDialog={this.tancarAlertDialog.bind(this)}
+                        confirmarAccio={this.borrarAnyAcademic.bind(this)}
+                    />
+                    <Notificacio 
+                        open={this.state.mostrarNotificacio}
+                        missatge={this.state.titolNotificacio}
+                        onCloseNotificacio={this.tancarNotificacio.bind(this)}
+                    />
+                </div>
             </div>
          );
     }

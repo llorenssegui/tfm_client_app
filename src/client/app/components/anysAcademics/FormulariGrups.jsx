@@ -199,10 +199,10 @@ class FormulariGrups extends React.Component {
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-            <ExpansionPanel defaultExpanded>
+            <ExpansionPanel >
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 <div className={classes.column}>
-                    <Typography className={classes.heading}>Curs</Typography>
+                    <Typography className={classes.heading}>Grups dels cursos</Typography>
                 </div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className={classes.details}>
@@ -214,7 +214,7 @@ class FormulariGrups extends React.Component {
                         <TextField
                               id="select-curs-native"
                               select
-                              label="Cursos disponibles"
+                              label="Cursos"
                               className={classes.textField}
                               value={this.state.curs}
                               onChange={this.onChangeCurs}
@@ -251,6 +251,11 @@ class FormulariGrups extends React.Component {
                       type="text"
                       value={this.state.grup}
                       onChange={this.onChangeNomGrupInputText.bind(this)}
+                      onKeyPress={ (e) => {
+                        if (e.key === 'Enter') {
+                          this.crearGrup();
+                        }
+                      }}
                       fullWidth
                       />
                       </Grid>
@@ -262,12 +267,17 @@ class FormulariGrups extends React.Component {
                         className={classes.button}
                         onClick={this.crearGrup.bind(this)}
                       >
-                        Afegir
+                        Crear grup
                       </Button>
                       </Grid>
                     </Grid>
                     <Grid container className={classes.chipContainer}>
                       <Grid item xs={12}>
+                      {this.state.grups.length < 1 &&
+                        <Typography variant="caption" gutterBottom>
+                            El curs seleccionat no te grups associats. Pots crear-los a través d'aquest formulari.
+                        </Typography>
+                      }
                         <ChipsArray 
                           chipData={this.state.grups}
                           deleteChip={this.borrarGrup.bind(this)}

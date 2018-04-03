@@ -34,14 +34,16 @@ class ChipsArray extends React.Component {
       return (
         <div>
           {this.props.chipData.map(data => {
-            return (
-              <Chip
-                key={data.key}
-                label={data.label}
-                onDelete={this.handleDelete(data)}
-                className={classes.chip}
-              />
-            );
+            if(data.canView) {
+              return (
+                <Chip
+                  key={data.key}
+                  label={data.label}
+                  onDelete={this.handleDelete(data)}
+                  className={classes.chip}
+                />
+              );
+            }
           })}
         </div>
       );

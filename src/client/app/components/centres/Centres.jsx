@@ -65,7 +65,7 @@ class Centres extends React.Component {
             },
             body: JSON.stringify(centre)
         }).then(function(response) {  
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -97,7 +97,7 @@ class Centres extends React.Component {
             },
             body: JSON.stringify(centre)
         }).then(function(response) {  
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -141,7 +141,7 @@ class Centres extends React.Component {
                 'Authorization': this.Auth.getToken()
             }
         }).then(response => {
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');

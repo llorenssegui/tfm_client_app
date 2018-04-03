@@ -67,7 +67,7 @@ class AnysAcademics extends React.Component {
             },
             body: JSON.stringify(anyAcademic)
         }).then(function(response) {  
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json()
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -99,7 +99,7 @@ class AnysAcademics extends React.Component {
             },
             body: JSON.stringify(anyAcademic)
         }).then(function(response) {  
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json()
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -153,7 +153,7 @@ class AnysAcademics extends React.Component {
                 'Authorization': this.Auth.getToken()
             }
         }).then(response => {
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json()
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -189,7 +189,7 @@ class AnysAcademics extends React.Component {
             }
         })
         .then((response) => {
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json()
             } else if (response.status === 401) {
                 this.props.history.replace('/login');

@@ -81,16 +81,23 @@ class FormulariGrups extends React.Component {
       let curs = event.target.value;
       this.setState({ curs: curs });
       this.requestGrups(function(grups, context) {
+        
         let grupsFiltrats = grups.filter(g => Number(g.curs) === Number(context.state.curs) && Number(g.centre === Number(context.props.centre)));
+
         let buildChipsGrups = [];
-          for(var i = 0; i < grupsFiltrats.length; i++) {
-            let chip = {
-              key: grupsFiltrats[i].id,
-              label: grupsFiltrats[i].nom
-            }
-            buildChipsGrups.push(chip);
+        for(var i = 0; i < grupsFiltrats.length; i++) {
+          let canView = true;
+          if(grupsFiltrats.length === 1 && grupsFiltrats[i].nom.includes("Default")) {
+            canView = false;
           }
-          context.setState({ grups: buildChipsGrups });
+          let chip = {
+            key: grupsFiltrats[i].id,
+            label: grupsFiltrats[i].nom,
+            canView: canView
+          }
+          buildChipsGrups.push(chip);
+        }
+        context.setState({ grups: buildChipsGrups });
       });
     }
 
@@ -108,7 +115,7 @@ class FormulariGrups extends React.Component {
             }
         })
         .then((response) => {
-          if(response.status === 200) {
+          if(response.status === 200 || response.status === 201) {
             return response.json();
           } else if (response.status === 401) {
               this.props.history.replace('/login');
@@ -125,9 +132,14 @@ class FormulariGrups extends React.Component {
               let grupsFiltrats = grups.filter(g => Number(g.curs) === Number(context.state.curs) && Number(g.centre === Number(context.props.centre)));
               let buildChipsGrups = [];
               for(var i = 0; i < grupsFiltrats.length; i++) {
+                let canView = true;
+                if(grupsFiltrats.length === 1 && grupsFiltrats[i].nom.includes("Default")) {
+                  canView = false;
+                }
                 let chip = {
                   key: grupsFiltrats[i].id,
-                  label: grupsFiltrats[i].nom
+                  label: grupsFiltrats[i].nom,
+                  canView: canView
                 }
                 buildChipsGrups.push(chip);
               }
@@ -152,7 +164,7 @@ class FormulariGrups extends React.Component {
             }
         })
         .then((response) => {
-          if(response.status === 200) {
+          if(response.status === 200 || response.status === 201) {
             return response.json();
           } else if (response.status === 401) {
               this.props.history.replace('/login');
@@ -169,6 +181,7 @@ class FormulariGrups extends React.Component {
     }
 
     requestPOSTGrup (grup, callback) {
+      
       let url = config.apiEndpoint + '/grups/';
       if(!grup.centre) grup.centre = this.props.centre;
       fetch(url, {
@@ -179,13 +192,15 @@ class FormulariGrups extends React.Component {
           },
           body: JSON.stringify(grup)
       }).then(function(response) { 
-        if(response.status === 200) {
+        
+        if(response.status === 200 || response.status === 201) {
           return response.json();
         } else if (response.status === 401) {
             this.props.history.replace('/login');
         }
       }).then((grup) => {
-          if(grup) callback(grup, this);
+          
+          callback(grup, this);
       }).catch(function(error) {
         const status = error.response ? error.response.status : 500
         if (status === 401) {
@@ -203,13 +218,13 @@ class FormulariGrups extends React.Component {
               'Authorization': this.Auth.getToken()
           }
       }).then(response => {
-        if(response.status === 200) {
+        if(response.status === 200 || response.status === 201) {
           return response.json();
         } else if (response.status === 401) {
             this.props.history.replace('/login');
         }
-      }).then((_grup) => {
-          callback(grup.key, this);
+      }).then((grup) => {
+          callback(grup, this);
       }).catch(function(error) {
         const status = error.response ? error.response.status : 500
         if (status === 401) {
@@ -219,27 +234,36 @@ class FormulariGrups extends React.Component {
     }
 
     borrarGrup(grup) {
-      this.requestDELETEGrup(grup, function(key, context) {
-        debugger;
-        let nousGrups = context.state.grups.filter(g => g.key !== key);
-        context.setState({grups: nousGrups});
+      this.requestDELETEGrup(grup, function(grup, context) {
       }); 
-      
+      let nousGrups = this.state.grups.filter(g => g.key !== grup.key);
+      if(nousGrups && nousGrups.length === 1 && nousGrups[0].label.includes("Default")) {
+        nousGrups[0].canView = false;
+      }
+      this.setState({grups: nousGrups});
     }
 
     crearGrup() {
       if(this.state.grup && this.state.grup != "") {
+        
         this.requestPOSTGrup ({
           nom: this.state.grup, 
-          curs: this.state.curs
+          curs: this.state.curs,
+          centre: this.props.centre
         }, function(grup, context) {
+          
           let grupChip = {
             key: Number(grup.id),
-            label: grup.nom
+            label: grup.nom,
+            canView: true
           };
           let nextGrup = context.state.countGrups + 1;
+          let newGrups = context.state.grups;
+          newGrups.forEach(function(g) {
+            g.canView = true;
+          });
           context.setState({
-            grups: context.state.grups.concat([grupChip]), 
+            grups: newGrups.concat([grupChip]), 
             countGrups: nextGrup,
             grup: ""
           });
@@ -330,10 +354,10 @@ class FormulariGrups extends React.Component {
                             El curs seleccionat no te grups associats. Pots crear-los a través d'aquest formulari.
                         </Typography>
                       }
-                        <ChipsArray 
-                          chipData={this.state.grups}
-                          deleteChip={this.borrarGrup.bind(this)}
-                        />
+                      <ChipsArray 
+                        chipData={this.state.grups}
+                        deleteChip={this.borrarGrup.bind(this)}
+                      />
                       </Grid>
                     </Grid>
                   </div>

@@ -67,19 +67,11 @@ class Assignatures extends React.Component {
         this.setState({alertDialogObert: true, assignaturaSeleccionada: assignatura, titolAlertDialog: assignatura.nom});
     }
 
-    handleCrearAssignatura(assignatura, avaluacions, grups) {
-        this.peticioCrearAssignatura(assignatura, avaluacions, grups, function(assignatura, avaluacions, grups, context) {
+    handleCrearAssignatura(assignatura, avaluacions) {
+        this.peticioCrearAssignatura(assignatura, avaluacions, function(assignatura, avaluacions, context) {
             let id_curs = assignatura.curs;
             let id_assignatura = assignatura.id;
-            for(let i = 0; i < grups.length; i++) {
-                let grup = {
-                    nom: grups[i].label,
-                    curs: id_curs
-                };
-                context.peticioCrearGrup(grup, function(grup, context) {
-
-                });
-            }
+            debugger;
             for(let i = 0; i < avaluacions.length; i++) {
                 let avaluacio = {
                     nom: avaluacions[i].label,
@@ -89,15 +81,26 @@ class Assignatures extends React.Component {
                     
                 });
             }
+            context.peticioGETGrups(function(grups, context){
+                let grupsFiltrats = grups.filter(g => g.curs === id_curs && g.centre === Number(context.props.match.params.idCentre));
+                if(!grupsFiltrats || grupsFiltrats.length === 0) {
+                    let grup = {
+                        nom: 'Default',
+                        curs: id_curs,
+                        centre: Number(context.props.match.params.idCentre)
+                    };
+                    context.peticioCrearGrup(grup);
+                }
+            });
             context.setState({formulariCrearAssignaturaObert:false, 
                 titolNotificacio: "Assignatura creada satisfactoriament", 
                 mostrarNotificacio:true,
-                assignatures: this.state.assignatures.concat([assignatura])
+                assignatures: context.state.assignatures.concat([assignatura])
             });
         });
     }
 
-    peticioCrearAssignatura(assignatura, avaluacions, grups, callback) {
+    peticioCrearAssignatura(assignatura, avaluacions, callback) {
         let url = config.apiEndpoint + '/assignatures/';
         if(!assignatura.anyAcademic) assignatura.anyAcademic = this.state.idAnyAcademic;
         fetch(url, {
@@ -108,13 +111,13 @@ class Assignatures extends React.Component {
             },
             body: JSON.stringify(assignatura)
         }).then(function(response) {  
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
             }
         }).then((assignaturaN) => {
-            if(assignaturaN) callback(assignaturaN, avaluacions, grups, this);
+            callback(assignatura, avaluacions, this);
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
             if (status === 401) {
@@ -133,13 +136,37 @@ class Assignatures extends React.Component {
             },
             body: JSON.stringify(grup)
         }).then(function(response) {  
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
             }
         }).then((grup) => {
             if(grup) callback(grup, this);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+        });
+    }
+
+    peticioGETGrups(callback) {
+        let url = config.apiEndpoint + '/grups/';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
+        }).then((grups) => {
+            if(grups) callback(grups, this);
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
             if (status === 401) {
@@ -158,7 +185,7 @@ class Assignatures extends React.Component {
             },
             body: JSON.stringify(avaluacio)
         }).then(function(response) {  
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -184,7 +211,7 @@ class Assignatures extends React.Component {
             },
             body: JSON.stringify(assignatura)
         }).then(function(response) {  
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -231,7 +258,7 @@ class Assignatures extends React.Component {
                 'Authorization': this.Auth.getToken()
             }
         }).then(response => {
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -268,7 +295,7 @@ class Assignatures extends React.Component {
             }
         })
         .then((response) => {
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -297,7 +324,7 @@ class Assignatures extends React.Component {
             }
         })
         .then((response) => {
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');
@@ -328,7 +355,7 @@ class Assignatures extends React.Component {
             }
         })
         .then((response) => {
-            if(response.status === 200) {
+            if(response.status === 200 || response.status === 201) {
                 return response.json();
             } else if (response.status === 401) {
                 this.props.history.replace('/login');

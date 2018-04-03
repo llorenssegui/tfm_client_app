@@ -14,8 +14,8 @@ import Slide from 'material-ui/transitions/Slide';
 import TextField from 'material-ui/TextField';
 import { MenuItem } from 'material-ui/Menu';
 import Grid from 'material-ui/Grid';
-import ChipsArray from '../chipsArray/ChipsArray.jsx';
 import Utils from '../../utils.jsx';
+import ChipsArray from '../chipsArray/ChipsArray.jsx';
 
 const styles = theme => ({
   container: {
@@ -62,11 +62,8 @@ class FormulariAssignatura extends React.Component {
         nom: "",
         curs: 0,
         avaluacions: [],
-        grups: [],
         countAvaluacios: 0,
-        countGrups: 0,
         avaluacio: "",
-        grup: ""
       };
       this.utils = new Utils();
   }
@@ -87,10 +84,6 @@ class FormulariAssignatura extends React.Component {
     this.setState({ avaluacio: event.target.value });
   }
 
-  onChangeNomGrupInputText(event) {
-    this.setState({ grup: event.target.value });
-  }
-
   handleCrearAssignatura() {
     if(this.state && this.state.curs && this.state.curs != 0 && this.state.nom && this.state.nom !== "") {
       let assignatura = {
@@ -98,7 +91,7 @@ class FormulariAssignatura extends React.Component {
         curs: this.state.curs
       };
       this.setState({nom: "", curs: 0});
-      this.props.onCreate(assignatura, this.state.avaluacions, this.state.grups);
+      this.props.onCreate(assignatura, this.state.avaluacions);
     }
   }
 
@@ -106,7 +99,8 @@ class FormulariAssignatura extends React.Component {
     if(this.state.avaluacio && this.state.avaluacio != "") {
       let avaluacio = {
         key: Number(this.state.countAvaluacios),
-        label: this.state.avaluacio
+        label: this.state.avaluacio,
+        canView: true
       };
       let nextAvaluacio = this.state.countAvaluacios + 1;
       this.setState({
@@ -117,29 +111,9 @@ class FormulariAssignatura extends React.Component {
     }
   }
 
-  crearGrup() {
-    if(this.state.grup && this.state.grup != "") {
-      let grup = {
-        key: Number(this.state.countGrups),
-        label: this.state.grup
-      };
-      let nextGrup = this.state.countGrups + 1;
-      this.setState({
-        grups: this.state.grups.concat([grup]), 
-        countGrups: nextGrup,
-        grup: ""
-      });
-    }
-  }
-
   borrarAvaluacio(avaluacio) {
     let novesAvaluacions = this.state.avaluacions.filter(a => a.key !== avaluacio.key);
     this.setState({avaluacions: novesAvaluacions});
-  }
-
-  borrarGrup(grup) {
-    let nousGrups = this.state.grups.filter(g => g.key !== grup.key);
-    this.setState({grups: nousGrups});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -225,7 +199,7 @@ class FormulariAssignatura extends React.Component {
                 fullWidth
                 />
                 </Grid>
-                <Grid item xs={2} md={1}>
+                <Grid item xs={4} md={1}>
                 <Button 
                   variant="raised" 
                   color="primary" 
@@ -237,44 +211,10 @@ class FormulariAssignatura extends React.Component {
                 </Button>
                 </Grid>
                 <Grid item xs={12} md={7}>
-                <div>
-                    <ChipsArray 
-                      chipData={this.state.avaluacions}
-                      deleteChip={this.borrarAvaluacio.bind(this)}
-                    />
-                </div>
-                </Grid>
-                <Grid item xs={8} md={4}>
-                <TextField
-                autoFocus
-                margin="dense"
-                id="grup"
-                name="grup"
-                label="Grup"
-                type="text"
-                value={this.state.grup}
-                onChange={this.onChangeNomGrupInputText.bind(this)}
-                fullWidth
-                />
-                </Grid>
-                <Grid item xs={2} md={1}>
-                <Button 
-                  variant="raised" 
-                  color="primary" 
-                  size="small" 
-                  className={classes.button}
-                  onClick={this.crearGrup.bind(this)}
-                >
-                  Afegir
-                </Button>
-                </Grid>
-                <Grid item xs={12} md={7}>
-                <div>
-                    <ChipsArray 
-                      chipData={this.state.grups}
-                      deleteChip={this.borrarGrup.bind(this)}
-                    />
-                </div>
+                  <ChipsArray 
+                    chipData={this.state.avaluacions}
+                    deleteChip={this.borrarAvaluacio.bind(this)}
+                  />
                 </Grid>
             </Grid>
             </div>

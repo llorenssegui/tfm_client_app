@@ -21,7 +21,7 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
-    position: 'absolute',
+    position: 'fixed',
     bottom: theme.spacing.unit * 3,
     right: theme.spacing.unit * 3,
   },
@@ -198,7 +198,6 @@ class AnysAcademics extends React.Component {
         .then((anysAcademics) => {
             if(anysAcademics) {
                 let filteredanysAcademics = anysAcademics.filter((anyAcademic) => anyAcademic.centre == this.props.match.params.idCentre);
-                if(!filteredanysAcademics || filteredanysAcademics.length === 0) this.props.history.replace('/notFound');
                 this.setState({ anysAcademics: filteredanysAcademics, centre: this.props.match.params.idCentre});
             }
         }).catch(function(error) {

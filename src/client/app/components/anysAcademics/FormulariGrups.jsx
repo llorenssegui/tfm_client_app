@@ -127,7 +127,7 @@ class FormulariGrups extends React.Component {
             if(cursos && cursos.length > 0) {
               curs = cursos[0].id;
             }
-            this.setState({ cursos: cursos, curs: curs});
+            this.setState({ cursos: cursos, curs: curs });
             this.requestGrups(function(grups, context) {
               let grupsFiltrats = grups.filter(g => Number(g.curs) === Number(context.state.curs) && Number(g.centre === Number(context.props.centre)));
               let buildChipsGrups = [];

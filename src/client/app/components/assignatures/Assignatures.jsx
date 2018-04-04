@@ -19,7 +19,7 @@ const styles = theme => ({
     },
     button: {
         margin: theme.spacing.unit,
-        position: 'absolute',
+        position: 'fixed',
         bottom: theme.spacing.unit * 3,
         right: theme.spacing.unit * 3,
     },
@@ -264,7 +264,6 @@ class Assignatures extends React.Component {
                 this.props.history.replace('/login');
             }
         }).then((assignatura) => {
-            if (assignatura) {
                 let novesAssignatures = this.state.assignatures.filter(a => a.id !== this.state.assignaturaSeleccionada.id);
                 this.setState({alertDialogObert: false, 
                     assignaturaSeleccionada: undefined,
@@ -272,7 +271,6 @@ class Assignatures extends React.Component {
                     mostrarNotificacio: true,
                     assignatures: novesAssignatures
                 });
-            }
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
             if (status === 401) {
@@ -333,7 +331,6 @@ class Assignatures extends React.Component {
         .then((assignatures) => {
             if (assignatures) {
                 let filteredassignatures = assignatures.filter((assignatura) => assignatura.anyAcademic == this.state.idAnyAcademic);
-                if(!filteredassignatures || filteredassignatures.length === 0) this.props.history.replace('/notFound');
                 this.setState({ assignatures: filteredassignatures});
                 if(callback) callback(this);
             }

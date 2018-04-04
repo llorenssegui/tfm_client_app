@@ -19,7 +19,7 @@ const styles = theme => ({
     },
     button: {
         margin: theme.spacing.unit,
-        position: 'absolute',
+        position: 'fixed',
         bottom: theme.spacing.unit * 3,
         right: theme.spacing.unit * 3,
     },
@@ -147,7 +147,6 @@ class Centres extends React.Component {
                 this.props.history.replace('/login');
             }
         }).then((centre) => {
-            if (centre) {
                 let index = this.utils.getIndexElement(this.props.centres, "id", this.state.centreSeleccionat);
                 this.setState({alertDialogObert: false, 
                     centreSeleccionat: undefined,
@@ -155,7 +154,6 @@ class Centres extends React.Component {
                     mostrarNotificacio: true
                 });
                 this.props.onBorrarCentre(index);
-            }
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
             if (status === 401) {

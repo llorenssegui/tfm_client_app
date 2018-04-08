@@ -22,7 +22,7 @@ const styles = theme => ({
     textField: {
       marginLeft: theme.spacing.unit,
       marginRight: theme.spacing.unit,
-      width: 200,
+      width: '50%',
     },
     menu: {
       width: 200,
@@ -87,43 +87,49 @@ class Login extends React.Component {
         const { classes } = this.props;
         return(
             <Grid container spacing={24} className={classes.login_container}>
-            <Grid item md={4} xs={0} />
-            <Grid item md={4} xs={12}>
+            <Grid item lg={4} xs={0} />
+            <Grid item lg={4} xs={12} sm={12}>
             <Paper className={classes.paper}>
                 <form onSubmit={this.handleFormSubmit}>
                     <Grid container spacing={24} className={classes.login_container}>
-                        <Grid item xs={12} className={classes.icon}><IconaLogin /></Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="email"
-                                label="E-mail"
-                                name="email"
-                                className={classes.textField}
-                                placeholder="E-mail"
-                                margin="normal"
-                                type="email"
-                                onChange={this.handleChange}
-                            />
+                        <Grid item xs={12} lg={12} className={classes.icon}><IconaLogin /></Grid>
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <TextField
+                                    id="email"
+                                    label="E-mail"
+                                    name="email"
+                                    className={classes.textField}
+                                    placeholder="E-mail"
+                                    margin="normal"
+                                    type="email"
+                                    onChange={this.handleChange}
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="password"
-                                name="password"
-                                label="Contrassenya"
-                                className={classes.textField}
-                                margin="normal"
-                                type="password"
-                                placeholder="Contrasenya"
-                                onChange={this.handleChange}
-                            />
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <TextField
+                                    id="password"
+                                    name="password"
+                                    label="Contrassenya"
+                                    className={classes.textField}
+                                    margin="normal"
+                                    type="password"
+                                    placeholder="Contrasenya"
+                                    onChange={this.handleChange}
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Button type="submit" variant="raised" color="primary" className={classes.button}>
-                                Accedeix
-                            </Button>
-                            <Button variant="raised" className={classes.button}>
-                                Registre't
-                            </Button>
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <Button type="submit" variant="raised" color="primary" className={classes.button}>
+                                    Accedeix
+                                </Button>
+                                <Button variant="raised" className={classes.button}>
+                                    Registre't
+                                </Button>
+                            </Grid>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="caption" gutterBottom align="center">
@@ -134,7 +140,7 @@ class Login extends React.Component {
                 </form>
             </Paper>
             </Grid>
-            <Grid item md={4} xs={0} />
+            <Grid item lg={4} xs={0} />
             <DialogComponent 
                 open={this.state.dialogObert} 
                 missatge="Usuari i contrasenya incorrectes"

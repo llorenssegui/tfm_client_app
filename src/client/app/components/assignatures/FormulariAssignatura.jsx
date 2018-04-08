@@ -148,7 +148,7 @@ class FormulariAssignatura extends React.Component {
           </AppBar>
           <div className={classes.container}>
             <Grid container>
-                <Grid item xs={12} sm={6} md={6}>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
                 <TextField
                 autoFocus
                 margin="dense"
@@ -161,7 +161,7 @@ class FormulariAssignatura extends React.Component {
                 fullWidth
                 />
                 </Grid>
-                <Grid item xs={12} sm={6} md={6}>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
                 <TextField
                 id="select-curs-native"
                 select
@@ -186,7 +186,7 @@ class FormulariAssignatura extends React.Component {
                 ))}
                 </TextField>
                 </Grid>
-                <Grid item xs={8} md={4}>
+                <Grid item xs={8} sm={8} md={8} lg={4}>
                 <TextField
                 autoFocus
                 margin="dense"
@@ -199,7 +199,7 @@ class FormulariAssignatura extends React.Component {
                 fullWidth
                 />
                 </Grid>
-                <Grid item xs={4} md={1}>
+                <Grid item xs={4} sm={4} md={4} lg={1}>
                 <Button 
                   variant="raised" 
                   color="primary" 
@@ -210,7 +210,7 @@ class FormulariAssignatura extends React.Component {
                   Afegir
                 </Button>
                 </Grid>
-                <Grid item xs={12} md={7}>
+                <Grid item xs={12} sm={12} md={12} lg={7}>
                   <ChipsArray 
                     chipData={this.state.avaluacions}
                     deleteChip={this.borrarAvaluacio.bind(this)}

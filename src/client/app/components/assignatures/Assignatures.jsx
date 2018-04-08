@@ -390,12 +390,12 @@ class Assignatures extends React.Component {
         return(
             <div className={classes.root}>
                 <Grid container>
-                <Grid item xs={12} sm={2} md={2}></Grid>
-                <Grid item xs={12} sm={8} md={8}>
+                <Grid item xs={12} lg={2}></Grid>
+                <Grid item xs={12} lg={8}>
                 <Grid container spacing={24}>
                     {this.state.assignatures.map((a, index) => {
                         return(
-                        <Grid item xs={12} sm={12} md={4}>
+                        <Grid item xs={12} lg={4}>
                             <Assignatura 
                                 id={a.id}
                                 posicio={index}
@@ -434,7 +434,7 @@ class Assignatures extends React.Component {
                     />       
                 </Grid>
                 </Grid>
-                <Grid item xs={12} sm={2} md={2}></Grid>
+                <Grid item xs={12} lg={2}></Grid>
                 </Grid>
                 <Button onClick={this.handleFormulariCrear.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                     <AddIcon />

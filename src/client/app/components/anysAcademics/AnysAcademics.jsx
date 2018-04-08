@@ -224,9 +224,9 @@ class AnysAcademics extends React.Component {
                 </Grid>
                 <div className={classes.root}>
                     <Grid container spacing={24}>
-                        <Grid item xs>
+                        <Grid item lg>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={12} lg={6}>
                         <Grid container spacing={24}>
                         {this.state.anysAcademics.map((aa) => 
                             <Grid item xs={12} sm={6}>
@@ -242,7 +242,7 @@ class AnysAcademics extends React.Component {
                         )}
                         </Grid>
                         </Grid>
-                        <Grid item xs>
+                        <Grid item lg>
                         </Grid>
                     </Grid>
                     <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>

@@ -173,7 +173,7 @@ class Centres extends React.Component {
                 <Grid container spacing={24}>
                     {this.props.centres.map((c, index) => {
                         return(
-                        <Grid item xs={12} sm={12} md={6}>
+                        <Grid item xs={12} sm={12} md={12} lg={6}>
                             <Centre 
                                 id={c.id}
                                 posicio={index}

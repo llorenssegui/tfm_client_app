@@ -38,7 +38,7 @@ class Header extends React.Component {
             <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                    <Grid  xs={12}><Typography 
+                    <Grid xs={12} sm={12} md={12} lg={12}><Typography 
                         variant="title" 
                         color="inherit" 
                         onClick={this.goHomePage.bind(this)}
@@ -47,7 +47,7 @@ class Header extends React.Component {
                         Teacher Support
                     </Typography></Grid>
 
-                    {this.Auth.loggedIn() && <Grid  xs={true}><div className={classes.marginIcon}><LoginIcon /></div></Grid>
+                    {this.Auth.loggedIn() && <Grid xs={true} sm={true} md={true} lg={true}><div className={classes.marginIcon}><LoginIcon /></div></Grid>
                     }    
                     </Toolbar>
                 </AppBar>

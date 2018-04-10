@@ -29,7 +29,6 @@ const styles = theme => ({
     },
     button: {
         margin: theme.spacing.unit,
-        width: '100%'
     },
     paper: {
         margin: theme.spacing.unit,
@@ -127,7 +126,7 @@ class Login extends React.Component {
                             </Grid>
                         </Grid>
                         <Grid container>
-                            <Grid item xs={12}>
+                            <Grid item lg={12}>
                                 <Button type="submit" variant="raised" color="primary" className={classes.button}>
                                     Accedeix
                                 </Button>

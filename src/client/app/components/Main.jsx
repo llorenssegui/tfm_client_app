@@ -1,6 +1,7 @@
 import React from 'react';
 import Login from './login/Login.jsx';
 import Home from './home/Home.jsx';
+import Registre from './registre/Registre.jsx';
 import NoTrobat from './notrobat/NoTrobat.jsx';
 import Assignatures from './assignatures/Assignatures.jsx';
 import AnysAcademics from './anysAcademics/AnysAcademics.jsx';
@@ -28,6 +29,7 @@ class Main extends React.Component {
                   <Route exact path='/centres/:idCentre' component={AnysAcademics} />
                   <Route exact path='/centres/:idCentre/anyacademic/:anyAcademic/:idAnyAcademic' component={Assignatures} />
                   <Route exact path='/login' component={Login} />
+                  <Route exact path='/registre' component={Registre} />
                   <Route component={NoTrobat}/> 
                </Switch>
             </BrowserRouter>

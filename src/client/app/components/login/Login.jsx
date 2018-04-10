@@ -29,6 +29,7 @@ const styles = theme => ({
     },
     button: {
         margin: theme.spacing.unit,
+        width: '100%'
     },
     paper: {
         margin: theme.spacing.unit,
@@ -83,6 +84,10 @@ class Login extends React.Component {
         this.setState({dialogObert: false});
     }
 
+    handleFormulariRegistre () {
+        this.props.history.replace('/registre');
+    }
+
     render() {
         const { classes } = this.props;
         return(
@@ -126,7 +131,7 @@ class Login extends React.Component {
                                 <Button type="submit" variant="raised" color="primary" className={classes.button}>
                                     Accedeix
                                 </Button>
-                                <Button variant="raised" className={classes.button}>
+                                <Button variant="raised" className={classes.button} onClick={this.handleFormulariRegistre.bind(this)}>
                                     Registre't
                                 </Button>
                             </Grid>

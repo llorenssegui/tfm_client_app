@@ -250,7 +250,6 @@ class Assignatures extends React.Component {
 
     borrarAssignatura(assignatura) {
         let url = config.apiEndpoint + '/assignatures/' + this.state.assignaturaSeleccionada.id + '/';
-        console.log(this.state.assignaturaSeleccionada);
         fetch(url, {
             method: 'DELETE',
             headers: {
@@ -449,4 +448,4 @@ Assignatures.propTypes = {
     classes: PropTypes.object.isRequired,
   };
   
-  export default withStyles(styles)(Assignatures);
+export default withStyles(styles)(Assignatures);

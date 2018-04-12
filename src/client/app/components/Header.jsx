@@ -44,7 +44,7 @@ class Header extends React.Component {
                         onClick={this.goHomePage.bind(this)}
                         className={classes.pointerCursor}
                     >
-                        Teacher Support
+                        <p id="titolHeader">Teacher Support</p>
                     </Typography></Grid>
 
                     {this.Auth.loggedIn() && <Grid xs={true} sm={true} md={true} lg={true}><div className={classes.marginIcon}><LoginIcon /></div></Grid>

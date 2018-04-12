@@ -3,6 +3,7 @@ import withAuth from '../functions/withAuth.jsx';
 import Centres from '../centres/Centres.jsx';
 import config from '../../../../../config.js';
 import AuthService from '../../services/AuthService.jsx';
+import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 
 class Home extends React.Component {
 
@@ -10,6 +11,7 @@ class Home extends React.Component {
         super(props);
         this.state = { centres: [] };
         this.Auth = new AuthService();
+        this.titolHeaderService = new TitolHeaderService();
     }
 
     componentWillMount() {
@@ -41,6 +43,11 @@ class Home extends React.Component {
                 this.props.history.replace('/login');
             }
         });
+    }
+
+    componentDidMount() {
+        debugger;
+        this.titolHeaderService.setTitol("Centres");
     }
 
     addCentres(centre, index) {

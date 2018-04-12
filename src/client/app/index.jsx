@@ -6,6 +6,14 @@ import Header from './components/Header.jsx';
 import { BrowserRouter } from 'react-router-dom';
 
 class App extends React.Component {
+  state = {
+    titol: ""
+  };
+
+  constructor(props) {
+    super(props);
+  }
+
   render () {
     return (
       <div>

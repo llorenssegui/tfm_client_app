@@ -13,6 +13,7 @@ import Utils from '../../utils.jsx';
 import AlertDialog from '../dialogs/AlertDialog.jsx';
 import FormulariGrups from './FormulariGrups.jsx';
 import AuthService from '../../services/AuthService.jsx';
+import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 
 const styles = theme => ({
   root: {
@@ -46,6 +47,7 @@ class AnysAcademics extends React.Component {
         super(props);
         this.utils = new Utils();
         this.Auth = new AuthService();
+        this.titolHeaderService = new TitolHeaderService();
     }
 
     handleFormulari (event) {
@@ -180,6 +182,7 @@ class AnysAcademics extends React.Component {
     }
 
     componentDidMount() {
+        this.titolHeaderService.setTitol("Anys acadèmics: " + this.props.location.state.nomCentre);
         let url = config.apiEndpoint + '/anysacademics/';
         fetch(url, {
             method: 'GET',
@@ -210,7 +213,10 @@ class AnysAcademics extends React.Component {
     }
 
     seleccionarAnyAcademic(anyAcademic, idAnyAcademic) {
-        this.props.history.push(this.state.centre + "/anyacademic/" + anyAcademic + "/" + idAnyAcademic);
+        this.props.history.push({
+            pathname: this.state.centre + "/anyacademic/" + anyAcademic + "/" + idAnyAcademic,
+            state: {nomCentre: this.props.location.state.nomCentre}
+        });
     }
 
     render() {

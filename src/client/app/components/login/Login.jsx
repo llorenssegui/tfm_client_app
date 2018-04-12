@@ -91,8 +91,8 @@ class Login extends React.Component {
         const { classes } = this.props;
         return(
             <Grid container spacing={24} className={classes.login_container}>
-            <Grid item lg={4} xs={0} />
-            <Grid item lg={4} xs={12} sm={12}>
+            <Grid item md={4} xs={0} ></Grid>
+            <Grid item md={4} xs={12} sm={12}>
             <Paper className={classes.paper}>
                 <form onSubmit={this.handleFormSubmit}>
                     <Grid container spacing={24} className={classes.login_container}>
@@ -144,7 +144,7 @@ class Login extends React.Component {
                 </form>
             </Paper>
             </Grid>
-            <Grid item lg={4} xs={0} />
+            <Grid item md={4} xs={0}></Grid>
             <DialogComponent 
                 open={this.state.dialogObert} 
                 missatge="Usuari i contrasenya incorrectes"

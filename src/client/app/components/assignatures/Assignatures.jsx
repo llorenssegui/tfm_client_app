@@ -12,6 +12,7 @@ import config from '../../../../../config.js';
 import Utils from '../../utils.jsx';
 import FormulariAssignatura from './FormulariAssignatura.jsx';
 import AuthService from '../../services/AuthService.jsx';
+import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 
 const styles = theme => ({
     root: {
@@ -45,6 +46,7 @@ class Assignatures extends React.Component {
         };
         this.utils = new Utils();
         this.Auth = new AuthService();
+        this.titolHeaderService = new TitolHeaderService();
     }
 
     handleFormulari() {
@@ -377,6 +379,7 @@ class Assignatures extends React.Component {
     }
 
     componentDidMount() {
+        this.titolHeaderService.setTitol("Assignatures: " + this.props.location.state.nomCentre);
         this.obtenirAnyAcademic(function(context){
             context.obtenirCurssos(function (context) {
                 context.obtenirAssignatures();

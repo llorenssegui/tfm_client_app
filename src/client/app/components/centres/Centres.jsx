@@ -12,6 +12,7 @@ import AlertDialog from '../dialogs/AlertDialog.jsx';
 import config from '../../../../../config.js';
 import Utils from '../../utils.jsx';
 import AuthService from '../../services/AuthService.jsx';
+import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 
 const styles = theme => ({
     root: {
@@ -40,6 +41,11 @@ class Centres extends React.Component {
         super(props);
         this.utils = new Utils();
         this.Auth = new AuthService();
+        this.titolHeaderService = new TitolHeaderService();
+    }
+
+    componentDidMount() {
+        this.titolHeaderService.setTitol("Centres");
     }
 
     handleFormulari (event) {
@@ -162,8 +168,11 @@ class Centres extends React.Component {
         });
     }
 
-    seleccionarcentre(id) {
-        this.props.history.push("/centres/" + id);
+    seleccionarcentre(id, nom) {
+        this.props.history.push({
+            pathname: "/centres/" + id,
+            state: {nomCentre: nom}
+        });
     }
 
     render() {

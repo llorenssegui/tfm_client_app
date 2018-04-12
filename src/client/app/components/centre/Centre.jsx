@@ -51,7 +51,7 @@ class Centre extends React.Component {
     }
 
     clickComponent() {
-        this.props.onSeleccionarCentre(this.props.id);
+        this.props.onSeleccionarCentre(this.props.id, this.props.nom);
     }
 
     render() {

@@ -9,6 +9,7 @@ import AuthService from '../../services/AuthService.jsx';
 import IconaLogin from '../iconaLogin/iconaLogin.jsx';
 import DialogComponent from '../dialogs/DialogComponent.jsx';
 import Typography from 'material-ui/Typography';
+import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 
 const styles = theme => ({
     container: {
@@ -29,6 +30,7 @@ const styles = theme => ({
     },
     button: {
         margin: theme.spacing.unit,
+        textAlign: "center"
     },
     paper: {
         margin: theme.spacing.unit,
@@ -49,7 +51,8 @@ class Login extends React.Component {
         this.Auth = new AuthService();
         this.state = {
             dialogObert: false
-        }
+        };
+        this.titolHeaderService = new TitolHeaderService();
     }
   
     handleChange(e) {
@@ -71,6 +74,10 @@ class Login extends React.Component {
             .catch(err => {
                 this.setState({dialogObert: true});
             })
+    }
+
+    componentDidMount () {
+        this.titolHeaderService.setTitol("Teacher Support");
     }
 
     componentWillMount() {
@@ -126,7 +133,7 @@ class Login extends React.Component {
                             </Grid>
                         </Grid>
                         <Grid container>
-                            <Grid item lg={12}>
+                            <Grid item xs={12}>
                                 <Button type="submit" variant="raised" color="primary" className={classes.button}>
                                     Accedeix
                                 </Button>
@@ -137,7 +144,6 @@ class Login extends React.Component {
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="caption" gutterBottom align="center">
-                                Has oblidat la contrassenya?
                             </Typography>
                         </Grid>
                     </Grid>

@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import AlertDialog from '../dialogs/AlertDialog.jsx';
+import DialogComponent from '../dialogs/DialogComponent.jsx';
 import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 
 const styles = theme => ({
@@ -39,7 +39,9 @@ class Registre extends React.Component {
             email: "",
             password: "",
             password_2: "",
-            validForm: {}
+            validForm: {},
+            missatgeEmailExistent: "Ja existeix un compte amb el correu",
+            dialogObert: false
         };
         this.Auth = new AuthService();
         this.titolHeaderService = new TitolHeaderService();
@@ -77,6 +79,12 @@ class Registre extends React.Component {
         return true;
     }
 
+    tancarDialog () {
+        this.setState({
+            dialogObert: false
+        });
+    }
+
     formIsValid() {
         let validFormAux = {};
         let isValid = true;
@@ -86,15 +94,16 @@ class Registre extends React.Component {
                 isValid = false;
             }
         }
-        debugger;
         this.setState({validForm: validFormAux});
         return isValid;
     }
 
-    handleFormSubmit (e) {
-        e.preventDefault();
+    handleFormSubmit = event => {
+        event.preventDefault();
+        event.stopPropagation();
+        var that = this;
         let url = config.apiEndpoint + '/professors/';
-        if(this.formIsValid() && this.state.password === this.state.password_2) {
+        if(true && this.state.password === this.state.password_2) {
             let professor = {
                 nom: this.state.nom,
                 email: this.state.email,
@@ -113,17 +122,28 @@ class Registre extends React.Component {
             }).then(function(response) {  
                 if(response.status === 200 || response.status === 201) {
                     return response.json();
+                } else if (response.status === 400) {
+                    let vf = that.state.validForm;
+                    vf["email"] = true;
+                    that.setState({
+                        dialogObert: true,
+                        missatgeEmailExistent: that.state.missatgeEmailExistent + ": " + that.state.email,
+                        validForm: vf
+                    });
+                    return false;
                 } else if (response.status === 401) {
                     this.props.history.replace('/login');
                 }
             }).then((professor) => {
-                this.Auth.login(this.state.email, this.state.password)
-                .then(res => {
-                    this.props.history.replace('/');
-                })
-                .catch(err => {
-                    console.log("Error", err);
-                });
+                if(professor !== false) {
+                    this.Auth.login(this.state.email, this.state.password)
+                    .then(res => {
+                        this.props.history.replace('/');
+                    })
+                    .catch(err => {
+                        console.log("Error", err);
+                    });
+                }
             }).catch(function(error) {
                 const status = error.response ? error.response.status : 500
                 if (status === 401) {
@@ -136,9 +156,15 @@ class Registre extends React.Component {
     render() {
         const { classes } = this.props;
         return(
-            <form onSubmit={this.handleFormSubmit.bind(this)}>
+            <form onSubmit={this.handleFormSubmit}>
                 <Grid container>
-                    <Grid item xs={12}>
+                    <DialogComponent 
+                        open={this.state.dialogObert} 
+                        tancarDialog={this.tancarDialog.bind(this)} 
+                        missatge={this.state.missatgeEmailExistent}
+                    />
+                    <Grid item xs={true} md={2}/>
+                    <Grid item xs={12} md={8}>
                         <Paper className={classes.root}>
                             <Grid container spacing={40}>
                                 <Grid item xs={12} sm={12} md={12}>
@@ -182,8 +208,8 @@ class Registre extends React.Component {
                                     <TextField
                                         id="data_naixement"
                                         label="Data de naixement"
-                                        type="data_naixement"
-                                        defaultValue="2017-05-24"
+                                        type="date"
+                                        defaultValue=""
                                         className={classes.textField}
                                         InputLabelProps={{
                                             shrink: true,
@@ -240,6 +266,7 @@ class Registre extends React.Component {
                             </Grid>
                         </Paper>
                     </Grid>
+                    <Grid item xs={true} md={2}/>
                 </Grid>
             </form>
         );

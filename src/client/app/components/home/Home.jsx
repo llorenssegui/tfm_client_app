@@ -46,7 +46,6 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        debugger;
         this.titolHeaderService.setTitol("Centres");
     }
 

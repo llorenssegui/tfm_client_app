@@ -73,7 +73,6 @@ class Assignatures extends React.Component {
         this.peticioCrearAssignatura(assignatura, avaluacions, function(assignatura, avaluacions, context) {
             let id_curs = assignatura.curs;
             let id_assignatura = assignatura.id;
-            debugger;
             for(let i = 0; i < avaluacions.length; i++) {
                 let avaluacio = {
                     nom: avaluacions[i].label,

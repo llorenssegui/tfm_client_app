@@ -61,6 +61,12 @@ class Assignatura extends React.Component {
     }
 
     clickComponent() {
+        let assignatura = {
+            id: this.props.id,
+            nom: this.props.nom,
+            curs: this.props.curs.id
+        };
+        this.props.onSeleccionat(assignatura);
     }
 
     render() {

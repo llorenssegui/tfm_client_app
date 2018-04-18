@@ -5,6 +5,7 @@ import Registre from './registre/Registre.jsx';
 import NoTrobat from './notrobat/NoTrobat.jsx';
 import Assignatures from './assignatures/Assignatures.jsx';
 import AnysAcademics from './anysAcademics/AnysAcademics.jsx';
+import Gestio from './gestio/Gestio.jsx';
 import { BrowserRouter, Router, Route, Switch } from 'react-router-dom';
 import withAuth from './functions/withAuth.jsx';
 
@@ -28,6 +29,7 @@ class Main extends React.Component {
                   <Route exact path='/centres' component={Home} />
                   <Route exact path='/centres/:idCentre' component={AnysAcademics} />
                   <Route exact path='/centres/:idCentre/anyacademic/:anyAcademic/:idAnyAcademic' component={Assignatures} />
+                  <Route exact path='/centres/:idCentre/anyacademic/:anyAcademic/:idAnyAcademic/assignatura/:idAssignatura' component={Gestio} />
                   <Route exact path='/login' component={Login} />
                   <Route exact path='/registre' component={Registre} />
                   <Route component={NoTrobat}/> 

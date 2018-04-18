@@ -386,6 +386,13 @@ class Assignatures extends React.Component {
         });     
     }
 
+    seleccionarAssignatura (assignatura) {
+        this.props.history.push({
+            pathname: this.state.idAnyAcademic + "/assignatura/" + assignatura.id,
+            state: {assignatura: assignatura}
+        });
+    }
+
     render() {
         const { classes } = this.props;
         return(
@@ -404,6 +411,7 @@ class Assignatures extends React.Component {
                                 curs={this.obtenirCurs(a.curs)}
                                 onEditAssignatura={this.openActualitzarFormAssignatura.bind(this)}
                                 onEliminarAssignatura={this.openDialogBorrarAssignatura.bind(this)}
+                                onSeleccionat={this.seleccionarAssignatura.bind(this)}
                             />
                         </Grid>);
                     })}

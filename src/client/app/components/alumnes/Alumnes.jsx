@@ -15,6 +15,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 import FormulariAlumne from './FormulariAlumne.jsx';
+import IconaEditar from '../iconaEditar/IconaEditar.jsx';
+import Utils from '../../utils.jsx';
 
 const styles = theme => ({
     root: {
@@ -48,6 +50,7 @@ class Alumnes extends React.Component {
             formulariObert: false
         };
         this.Auth = new AuthService();
+        this.utils = new Utils();
     }
 
     componentWillMount () {
@@ -60,14 +63,26 @@ class Alumnes extends React.Component {
         });
     };
 
+    openEditarAlumne = index => (event, expanded) => {
+        this.setState({
+            alumneSeleccionat: this.state.alumnes[index],
+            formulariObert: true,
+        });
+        event.stopPropagation();
+    };
+
     onProcessarFormulari (alumne, idAlumne) {
         if(alumne && alumne.nom !== "" && alumne.congnom_1 !== "" && alumne.congnom_2 !== "") {
-            this.postAlumne(alumne);
+            if(idAlumne && idAlumne === this.state.alumneSeleccionat.id) {
+                this.putAlumne(alumne);
+            } else {
+                this.postAlumne(alumne);
+            }
         }
     }
 
     onClickTancarFormulari () {
-        this.setState({formulariObert: false});
+        this.setState({formulariObert: false, alumneSeleccionat: undefined});
     }
 
     obrirFormulari () {
@@ -121,7 +136,42 @@ class Alumnes extends React.Component {
             if(alumne) {
                 this.setState({
                     alumnes: this.state.alumnes.concat([alumne]),
-                    formulariObert: false
+                    formulariObert: false,
+                    alumneSeleccionat: undefined
+                });
+            }
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+        });
+    }
+
+    putAlumne (alumne) {
+        let url = config.apiEndpoint + '/alumnes/' + this.state.alumneSeleccionat.id + "/";
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            },
+            body: JSON.stringify(alumne)
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json()
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
+        }).then((alumne) => {
+            if(alumne) {
+                let index = this.utils.getIndexElement(this.state.alumnes, "id", alumne);
+                let nousAlumnes = this.state.alumnes;
+                nousAlumnes[index] = alumne;
+                this.setState({
+                    alumnes: nousAlumnes,
+                    formulariObert: false,
+                    alumneSeleccionat: undefined
                 });
             }
         }).catch(function(error) {
@@ -142,7 +192,14 @@ class Alumnes extends React.Component {
                 return(
                 <ExpansionPanel expanded={expanded === index} onChange={this.handleChange(index)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography className={classes.heading}>{a.nom} {a.congnom_1} {a.congnom_2}</Typography>
+                    <Grid container>
+                        <Grid item xs={11}>
+                            <Typography className={classes.heading}>{a.nom} {a.congnom_1} {a.congnom_2}</Typography>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <div style={{right: 0}} onClick={this.openEditarAlumne(index)}><IconaEditar /></div>
+                        </Grid>
+                    </Grid>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography>

@@ -10,15 +10,25 @@ import TextField from 'material-ui/TextField';
 import { MenuItem } from 'material-ui/Menu';
 import Paper from 'material-ui/Paper';
 import Tabs, { Tab } from 'material-ui/Tabs';
-import PhoneIcon from '@material-ui/icons/Phone';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import PersonPinIcon from '@material-ui/icons/PersonPin';
+import Alumnes from '../alumnes/Alumnes.jsx';
 
 const styles = theme => ({
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
         width: 400,
+    },
+    paper: theme.mixins.gutters({
+        paddingTop: 16,
+        paddingBottom: 16,
+        marginTop: theme.spacing.unit * 3,
+        marginBottom: theme.spacing.unit * 3,
+    }),
+    button: {
+        margin: theme.spacing.unit,
+        position: 'fixed',
+        bottom: theme.spacing.unit * 3,
+        right: theme.spacing.unit * 3,
     },
 });
 
@@ -202,16 +212,18 @@ class Gestio extends React.Component {
                     </Grid>
                 </Grid>
                 <Grid container spacing={24}>
-                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                    <Paper>
-                    {this.state.valueTab == 0 &&
-                        <p>Hola soc una activitat</p>
-                    }
-                    {this.state.valueTab == 1 &&
-                        <p>Hola soc un alumne</p>
-                    }
-                    </Paper>
+                    <Grid item xs={true} sm={true} md={1} lg={1} />
+                    <Grid item xs={12} sm={12} md={10} lg={10}>
+                        <Paper className={classes.paper}>
+                        {this.state.valueTab == 0 &&
+                            <p>Hola soc una activitat</p>
+                        }
+                        {this.state.valueTab == 1 &&
+                            <Alumnes grup={this.state.grupSeleccionat} centre={this.state.idCentre}/>
+                        }
+                        </Paper>
                     </Grid>
+                    <Grid item xs={true} sm={true} md={1} lg={1} />
                 </Grid>
                 <Grid container spacing={24}>
                     <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -230,7 +242,6 @@ class Gestio extends React.Component {
                             <Tab 
                                 style={{ maxWidth: '100%' }} 
                                 label={"Alumnes"} 
-                                textColorSecondary
                             />
                             </Tabs>
                         </Paper>
@@ -244,6 +255,6 @@ class Gestio extends React.Component {
 
 Gestio.propTypes = {
     classes: PropTypes.object.isRequired,
-  };
+};
   
 export default withStyles(styles)(Gestio);

@@ -47,7 +47,8 @@ class Alumnes extends React.Component {
             expanded: null,
             alumnes: [],
             alumneSeleccionat: undefined,
-            formulariObert: false
+            formulariObert: false,
+            formulariModificar: false
         };
         this.Auth = new AuthService();
         this.utils = new Utils();
@@ -67,6 +68,7 @@ class Alumnes extends React.Component {
         this.setState({
             alumneSeleccionat: this.state.alumnes[index],
             formulariObert: true,
+            formulariModificar: true,
         });
         event.stopPropagation();
     };
@@ -171,7 +173,8 @@ class Alumnes extends React.Component {
                 this.setState({
                     alumnes: nousAlumnes,
                     formulariObert: false,
-                    alumneSeleccionat: undefined
+                    alumneSeleccionat: undefined,
+                    formulariModificar: false
                 });
             }
         }).catch(function(error) {
@@ -216,6 +219,7 @@ class Alumnes extends React.Component {
                 onProcessarFormulari={this.onProcessarFormulari.bind(this)}
                 grup={this.props.grup}
                 centre={this.props.centre}
+                modeModificar={this.state.formulariModificar}
             />
             <Button onClick={this.obrirFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                 <AddIcon />

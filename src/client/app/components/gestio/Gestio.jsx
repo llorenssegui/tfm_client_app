@@ -11,6 +11,7 @@ import { MenuItem } from 'material-ui/Menu';
 import Paper from 'material-ui/Paper';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Alumnes from '../alumnes/Alumnes.jsx';
+import Activitats from '../activitats/Activitats.jsx';
 
 const styles = theme => ({
     textField: {
@@ -216,7 +217,7 @@ class Gestio extends React.Component {
                     <Grid item xs={12} sm={12} md={10} lg={10}>
                         <Paper className={classes.paper}>
                         {this.state.valueTab == 0 &&
-                            <p>Hola soc una activitat</p>
+                            <Activitats grup={this.state.grupSeleccionat} centre={this.state.idCentre}/>
                         }
                         {this.state.valueTab == 1 &&
                             <Alumnes grup={this.state.grupSeleccionat} centre={this.state.idCentre}/>

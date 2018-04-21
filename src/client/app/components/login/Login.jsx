@@ -10,6 +10,7 @@ import IconaLogin from '../iconaLogin/iconaLogin.jsx';
 import DialogComponent from '../dialogs/DialogComponent.jsx';
 import Typography from 'material-ui/Typography';
 import TitolHeaderService from '../../services/TitolHeaderService.jsx';
+import { CircularProgress } from 'material-ui/Progress';
 
 const styles = theme => ({
     container: {
@@ -39,6 +40,9 @@ const styles = theme => ({
     icon: {
         textAlign: 'center'
     },
+    progress: {
+        margin: theme.spacing.unit * 2,
+    },
     link: theme.typography.button,
 });
 
@@ -50,7 +54,8 @@ class Login extends React.Component {
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.Auth = new AuthService();
         this.state = {
-            dialogObert: false
+            dialogObert: false,
+            loading: false
         };
         this.titolHeaderService = new TitolHeaderService();
     }
@@ -65,14 +70,16 @@ class Login extends React.Component {
 
     handleFormSubmit(e) {
         e.preventDefault();
-      
+        this.setState({loading: true});
         this.Auth.login(this.state.email,this.state.password)
             .then(res => {
                this.props.history.replace('/');
+               this.setState({loading: false});
                location.reload();
             })
             .catch(err => {
                 this.setState({dialogObert: true});
+                this.setState({loading: false});
             })
     }
 
@@ -103,7 +110,14 @@ class Login extends React.Component {
             <Paper className={classes.paper}>
                 <form onSubmit={this.handleFormSubmit}>
                     <Grid container spacing={24} className={classes.login_container}>
-                        <Grid item xs={12} lg={12} className={classes.icon}><IconaLogin /></Grid>
+                        <Grid item xs={12} lg={12} className={classes.icon}>
+                        {this.state.loading == false &&
+                            <IconaLogin />
+                        }
+                        {this.state.loading == true &&
+                            <CircularProgress className={classes.progress} />
+                        }
+                        </Grid>
                         <Grid container>
                             <Grid item xs={12}>
                                 <TextField

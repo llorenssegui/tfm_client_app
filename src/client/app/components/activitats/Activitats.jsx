@@ -64,7 +64,7 @@ class Activitats extends React.Component {
         });
     };
 
-    openEditarAlumne = index => (event, expanded) => {
+    openEditarActivitat = index => (event, expanded) => {
         this.setState({
             activitatSeleccionada: this.state.activitats[index],
             formulariObert: true,
@@ -73,12 +73,12 @@ class Activitats extends React.Component {
         event.stopPropagation();
     };
 
-    onProcessarFormulari (activitat, idAlumne) {
+    onProcessarFormulari (activitat, idActivitat) {
         if(activitat && activitat.nom !== "" && activitat.congnom_1 !== "" && activitat.congnom_2 !== "") {
-            if(idAlumne && idAlumne === this.state.activitatSeleccionada.id) {
-                this.putAlumne(activitat);
+            if(idActivitat && idActivitat === this.state.activitatSeleccionada.id) {
+                this.putActivitat(activitat);
             } else {
-                this.postAlumne(activitat);
+                this.postActivitat(activitat);
             }
         }
     }
@@ -119,7 +119,7 @@ class Activitats extends React.Component {
         });
     }
 
-    postAlumne (activitat) {
+    postActivitat (activitat) {
         let url = config.apiEndpoint + '/activitats/';
         fetch(url, {
             method: 'POST',
@@ -150,7 +150,7 @@ class Activitats extends React.Component {
         });
     }
 
-    putAlumne (activitat) {
+    putActivitat (activitat) {
         let url = config.apiEndpoint + '/activitats/' + this.state.activitatSeleccionada.id + "/";
         fetch(url, {
             method: 'PUT',
@@ -197,10 +197,10 @@ class Activitats extends React.Component {
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Grid container>
                         <Grid item xs={11}>
-                            <Typography className={classes.heading}>{a.nom} {a.congnom_1} {a.congnom_2}</Typography>
+                            <Typography className={classes.heading}>{a.nom}</Typography>
                         </Grid>
                         <Grid item xs={1}>
-                            <div style={{right: 0}} onClick={this.openEditarAlumne(index)}><IconaEditar /></div>
+                            <div style={{right: 0}} onClick={this.openEditarActivitat(index)}><IconaEditar /></div>
                         </Grid>
                     </Grid>
                 </ExpansionPanelSummary>

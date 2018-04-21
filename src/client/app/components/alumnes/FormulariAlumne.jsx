@@ -9,7 +9,7 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 
-export default class FormulariActivitat extends React.Component {
+export default class FormulariAlumne extends React.Component {
 
   constructor(props) {
     super(props);

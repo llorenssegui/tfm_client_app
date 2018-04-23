@@ -1,5 +1,5 @@
 import React from 'react';
-import Assignatura from '../assignatura/Assignatura.jsx';
+import TaulaAlumnes from '../alumnes/TaulaAlumnes.jsx';
 import Notificacio from '../notificacions/Notificacio.jsx';
 import AlertDialog from '../dialogs/AlertDialog.jsx';
 import PropTypes from 'prop-types';
@@ -53,7 +53,8 @@ class Activitats extends React.Component {
             activitats: [],
             activitatSeleccionada: undefined,
             formulariObert: false,
-            formulariModificar: false
+            formulariModificar: false,
+            alumnes: []
         };
         this.Auth = new AuthService();
         this.utils = new Utils();
@@ -61,6 +62,15 @@ class Activitats extends React.Component {
 
     componentWillMount () {
         this.getActivitats();
+        this.getAlumnes(function(context) {
+            context.getQualificacions(context);
+        });
+    }
+    componentWillReceiveProps(nextProps) {
+        this.getActivitats();
+        this.getAlumnes(function(context) {
+            context.getQualificacions(context);
+        });
     }
     
     handleChange = panel => (event, expanded) => {
@@ -211,8 +221,69 @@ class Activitats extends React.Component {
         });
     }
 
+    getAlumnes (callback) {
+        let url = config.apiEndpoint + '/alumnes/';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
+        }).then((alumnes) => {
+            let alumnesFiltrats = alumnes.filter((alumne) => alumne.centre == this.props.centre && alumne.grup == this.props.grup);
+            this.setState({
+                alumnes: alumnesFiltrats,
+            });
+            callback && callback(this);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+        });
+    }
+
+    getQualificacions (context) {
+        let _this = context ? context : this;
+        let url = config.apiEndpoint + '/qualificacions/';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': _this.Auth.getToken()
+            }
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json();
+            } else if (response.status === 401) {
+                _this.props.history.replace('/login');
+            }
+        }).then((qualificacions) => {
+            debugger;
+            let alumnes = _this.state.alumnes;
+            for(let al in _this.state.alumnes) {
+                let alumne = _this.state.alumnes[al];
+                let qualificacionsFiltrades = qualificacions.filter((qualificacio) => qualificacio.alumne === alumne.id);
+                alumnes[al].qualificacions = qualificacionsFiltrades;
+            }
+            _this.setState({
+                alumnes: alumnes,
+            });
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                _this.props.history.replace('/login');
+            }
+        });
+    }
+
     totalPonderacioCorrecte (activitat_post) {
-        debugger;
         let totalPonderacio = 0;
         for(let key in this.state.activitats) {
             let activitat = this.state.activitats[key];
@@ -258,9 +329,12 @@ class Activitats extends React.Component {
                     </Grid>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                    <Typography>
-                    Aquí anirien les qualificacions de cada activitat
-                    </Typography>
+                    {this.state.alumnes.length > 0 && 
+                    <TaulaAlumnes alumnes={this.state.alumnes}/>
+                    }
+                    {this.state.alumnes.length <= 0 && 
+                    <Typography className={classes.heading}>No hi ha alumnes matriculats</Typography>
+                    }
                 </ExpansionPanelDetails>
                 </ExpansionPanel>
                 );

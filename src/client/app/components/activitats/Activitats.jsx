@@ -1,5 +1,7 @@
 import React from 'react';
 import Assignatura from '../assignatura/Assignatura.jsx';
+import Notificacio from '../notificacions/Notificacio.jsx';
+import AlertDialog from '../dialogs/AlertDialog.jsx';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import config from '../../../../../config.js';
@@ -44,6 +46,9 @@ class Activitats extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            mostrarNotificacio: false,
+            alertaOberta: false,
+            missatge: "Activitat creada satisfactoriament",
             expanded: null,
             activitats: [],
             activitatSeleccionada: undefined,
@@ -74,11 +79,28 @@ class Activitats extends React.Component {
     };
 
     onProcessarFormulari (activitat, idActivitat) {
-        if(activitat && activitat.nom !== "" && activitat.congnom_1 !== "" && activitat.congnom_2 !== "") {
+        if(activitat && activitat.nom !== "" && (!activitat.avaluable || activitat.ponderacio !== 0)) {
             if(idActivitat && idActivitat === this.state.activitatSeleccionada.id) {
-                this.putActivitat(activitat);
+                activitat.id = idActivitat;
+                if(this.totalPonderacioCorrecte(activitat)) {
+                    this.putActivitat(activitat);
+                } else {
+                    this.setState({
+                        formulariObert: false,
+                        alertaOberta: true,
+                        activitatSeleccionada: undefined
+                    });
+                }
             } else {
-                this.postActivitat(activitat);
+                if(this.totalPonderacioCorrecte(activitat)) {
+                    this.postActivitat(activitat);
+                } else {
+                    this.setState({
+                        formulariObert: false,
+                        alertaOberta: true,
+                        activitatSeleccionada: undefined
+                    });
+                }
             }
         }
     }
@@ -106,7 +128,7 @@ class Activitats extends React.Component {
                 this.props.history.replace('/login');
             }
         }).then((activitats) => {
-            let activitatsFiltrats = activitats.filter((activitat) => activitat.centre == this.props.centre && activitat.grup == this.props.grup);
+            let activitatsFiltrats = activitats.filter((activitat) => activitat.trimestre == this.props.semestre);
             this.setState({
                 activitats: activitatsFiltrats,
                 expanded: null
@@ -120,7 +142,7 @@ class Activitats extends React.Component {
     }
 
     postActivitat (activitat) {
-        let url = config.apiEndpoint + '/activitats/';
+        let url = config.apiEndpoint + '/activitats/'; 
         fetch(url, {
             method: 'POST',
             headers: {
@@ -139,7 +161,9 @@ class Activitats extends React.Component {
                 this.setState({
                     activitats: this.state.activitats.concat([activitat]),
                     formulariObert: false,
-                    activitatSeleccionada: undefined
+                    activitatSeleccionada: undefined,
+                    missatge: "Activitat creada satisfactoriament",
+                    mostrarNotificacio: true
                 });
             }
         }).catch(function(error) {
@@ -174,7 +198,9 @@ class Activitats extends React.Component {
                     activitats: nousActivitats,
                     formulariObert: false,
                     activitatSeleccionada: undefined,
-                    formulariModificar: false
+                    formulariModificar: false,
+                    missatge: "Activitat modificada satisfactoriament",
+                    mostrarNotificacio: true
                 });
             }
         }).catch(function(error) {
@@ -182,6 +208,33 @@ class Activitats extends React.Component {
             if (status === 401) {
                 this.props.history.replace('/login');
             }
+        });
+    }
+
+    totalPonderacioCorrecte (activitat_post) {
+        debugger;
+        let totalPonderacio = 0;
+        for(let key in this.state.activitats) {
+            let activitat = this.state.activitats[key];
+            if(activitat.avaluable && activitat.id !== activitat_post.id) {
+                totalPonderacio += activitat.ponderacio;
+            }
+        }
+        if(activitat_post) {
+            totalPonderacio += activitat_post.ponderacio;
+        }
+        return totalPonderacio <= 100;
+    }
+
+    tancarNotificacio () {
+        this.setState({
+            mostrarNotificacio: false
+        });
+    }
+
+    tancarAlertDialog () {
+        this.setState({
+            alertaOberta: false
         });
     }
     
@@ -197,7 +250,7 @@ class Activitats extends React.Component {
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Grid container>
                         <Grid item xs={11}>
-                            <Typography className={classes.heading}>{a.nom}</Typography>
+                            <Typography className={classes.heading}><b>{a.nom}</b>{a.avaluable && "  |  " + "Ponderació: " + a.ponderacio + " %" }</Typography>
                         </Grid>
                         <Grid item xs={1}>
                             <div style={{right: 0}} onClick={this.openEditarActivitat(index)}><IconaEditar /></div>
@@ -219,7 +272,19 @@ class Activitats extends React.Component {
                 onProcessarFormulari={this.onProcessarFormulari.bind(this)}
                 grup={this.props.grup}
                 centre={this.props.centre}
+                semestre={1}
                 modeModificar={this.state.formulariModificar}
+            />
+            <Notificacio 
+                open={this.state.mostrarNotificacio}
+                missatge={this.state.missatge}
+                onCloseNotificacio={this.tancarNotificacio.bind(this)}
+            />
+            <AlertDialog 
+                missatge={"El total de ponderacions de les activitats avaluables no pot superar el 100 %"}
+                open={this.state.alertaOberta}
+                onCloseDialog={this.tancarAlertDialog.bind(this)}
+                confirmarAccio={this.tancarAlertDialog.bind(this)}
             />
             <Button onClick={this.obrirFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                 <AddIcon />

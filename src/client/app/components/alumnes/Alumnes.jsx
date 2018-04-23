@@ -6,6 +6,7 @@ import config from '../../../../../config.js';
 import AuthService from '../../services/AuthService.jsx';
 import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 import Grid from 'material-ui/Grid';
+import Notificacio from '../notificacions/Notificacio.jsx';
 import ExpansionPanel, {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
@@ -44,6 +45,8 @@ class Alumnes extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            mostrarNotificacio: false,
+            missatge: "Alumne creat satisfactoriament",
             expanded: null,
             alumnes: [],
             alumneSeleccionat: undefined,
@@ -139,7 +142,9 @@ class Alumnes extends React.Component {
                 this.setState({
                     alumnes: this.state.alumnes.concat([alumne]),
                     formulariObert: false,
-                    alumneSeleccionat: undefined
+                    alumneSeleccionat: undefined,
+                    missatge: "Alumne creat satisfactoriament",
+                    mostrarNotificacio: true
                 });
             }
         }).catch(function(error) {
@@ -174,7 +179,9 @@ class Alumnes extends React.Component {
                     alumnes: nousAlumnes,
                     formulariObert: false,
                     alumneSeleccionat: undefined,
-                    formulariModificar: false
+                    formulariModificar: false,
+                    missatge: "Alumne modificat satisfactoriament",
+                    mostrarNotificacio: true
                 });
             }
         }).catch(function(error) {
@@ -182,6 +189,12 @@ class Alumnes extends React.Component {
             if (status === 401) {
                 this.props.history.replace('/login');
             }
+        });
+    }
+
+    tancarNotificacio () {
+        this.setState({
+            mostrarNotificacio: false
         });
     }
     
@@ -220,6 +233,11 @@ class Alumnes extends React.Component {
                 grup={this.props.grup}
                 centre={this.props.centre}
                 modeModificar={this.state.formulariModificar}
+            />
+            <Notificacio 
+                open={this.state.mostrarNotificacio}
+                missatge={this.state.missatge}
+                onCloseNotificacio={this.tancarNotificacio.bind(this)}
             />
             <Button onClick={this.obrirFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                 <AddIcon />

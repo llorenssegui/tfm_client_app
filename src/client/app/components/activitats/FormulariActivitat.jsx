@@ -18,19 +18,20 @@ export default class FormulariActivitat extends React.Component {
     this.state = {
       nom: this.props.activitat ? this.props.activitat.nom : "",
       avaluable: this.props.activitat ? this.props.activitat.avaluable : true,
-      semestre: this.props.activitat ? this.props.activitat.semestre : "",
+      semestre: this.props.activitat ? this.props.activitat.semestre : 0,
       ponderacio: this.props.activitat ? this.props.activitat.ponderacio : 0,
       modeModificar: this.props.modeModificar ? this.props.modeModificar : false
     };
   }
 
   componentWillReceiveProps(nextProps) {
+
     this.setState({
-        nom: this.props.activitat ? this.props.activitat.nom : "",
-        avaluable: this.props.activitat ? this.props.activitat.avaluable : true,
-        semestre: this.props.activitat ? this.props.activitat.semestre : 0,
-        ponderacio: this.props.activitat ? this.props.activitat.ponderacio : 0,
-        modeModificar: this.props.modeModificar ? this.props.modeModificar : false
+        nom: nextProps.activitat ? nextProps.activitat.nom : "",
+        avaluable: nextProps.activitat ? nextProps.activitat.avaluable : true,
+        semestre: nextProps.activitat ? nextProps.activitat.semestre : 0,
+        ponderacio: nextProps.activitat ? nextProps.activitat.ponderacio : 0,
+        modeModificar: nextProps.modeModificar ? nextProps.modeModificar : false
     });
   }
 
@@ -38,7 +39,7 @@ export default class FormulariActivitat extends React.Component {
     let activitat = {
         nom: this.state.nom,
         avaluable: this.state.avaluable,
-        trimestre: this.state.semestre,
+        trimestre: this.props.semestre,
         ponderacio: Number(this.state.ponderacio),
     };
     let idActivitat = this.props.activitat ? this.props.activitat.id : undefined;
@@ -96,7 +97,7 @@ export default class FormulariActivitat extends React.Component {
               margin="dense"
               id="ponderacio"
               name="ponderacio"
-              label="Ponderació"
+              label="Ponderació ( % )"
               type="number"
               value={this.state.ponderacio}
               onChange={this.onChangePonderacio.bind(this)}

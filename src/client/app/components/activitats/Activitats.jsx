@@ -77,6 +77,13 @@ class Activitats extends React.Component {
         this.setState({
             expanded: expanded ? panel : false,
         });
+        /*this.getActivitats();
+        this.getAlumnes(function(context) {
+            context.getQualificacions(context);
+            context.setState({
+                expanded: expanded ? panel : false,
+            });
+        });*/
     };
 
     openEditarActivitat = index => (event, expanded) => {
@@ -296,6 +303,21 @@ class Activitats extends React.Component {
         return totalPonderacio <= 100;
     }
 
+    updateQualificacio (qualificacio, index) {
+        debugger;
+        let activitats = this.state.activitats;
+        let qualificacioTrobada = activitats.qualificacions.filter((q) => q.activitat === activitats[index].id);
+        if(qualificacioTrobada && qualificacioTrobada.length === 1) {
+            let indexQualificacio =  activitats.qualificacions.indexOf(qualificacioTrobada[0]);
+            activitats.qualificacions[indexQualificacio] = qualificacio;
+        } else {
+            activitats.qualificacions.push(qualificacio);
+        }
+        this.setState({
+            activitats: activitats
+        });
+    }
+
     tancarNotificacio () {
         this.setState({
             mostrarNotificacio: false
@@ -329,7 +351,11 @@ class Activitats extends React.Component {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     {this.state.alumnes.length > 0 && 
-                    <TaulaAlumnes alumnes={this.state.alumnes} activitat={a}/>
+                    <TaulaAlumnes
+                        alumnes={this.state.alumnes}
+                        activitat={a}
+                        updateQualificacio={this.updateQualificacio.bind(this)}
+                    />
                     }
                     {this.state.alumnes.length <= 0 && 
                     <Typography className={classes.heading}>No hi ha alumnes matriculats</Typography>

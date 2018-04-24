@@ -32,7 +32,7 @@ class TaulaAlumnes extends React.Component {
             let alumne = alumnes[i];
             if(alumne.qualificacions) {
                 let qualificacions = alumne.qualificacions.filter((qualificacio) => qualificacio.activitat == this.props.activitat.id);
-                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? qualificacions[0] : 0;
+                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? qualificacions[0] : "";
             }
         }
         this.setState({
@@ -47,7 +47,7 @@ class TaulaAlumnes extends React.Component {
             let alumne = alumnes[i];
             if(alumne.qualificacions) {
                 let qualificacions = alumne.qualificacions.filter((qualificacio) => qualificacio.activitat == this.props.activitat.id);
-                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? qualificacions[0].qualificacio : 7.5;
+                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? qualificacions[0].qualificacio : "";
             }
         }
         this.setState({
@@ -67,9 +67,9 @@ class TaulaAlumnes extends React.Component {
             alumne: alumne.id,
             activitat: this.state.activitat.id
         };
-        let alumnes = this.state.alumnes;
-        alumnes[index].qualificacioActivitat = (event.target.value);
-        debugger;
+        let alumnes = JSON.parse(JSON.stringify(this.state.alumnes));
+        alumnes[index].qualificacioActivitat = event.target.value !== "" ? Number(event.target.value) : "";
+        
         this.setState({
             alumnes: alumnes
         });
@@ -80,8 +80,11 @@ class TaulaAlumnes extends React.Component {
         }
         if(event.target.value && event.target.value !== "" && Number(event.target.value) > 0) {
             this.qualificar(qualificacio, metode, function(context, qualificacio) {
+                debugger;
+                context.props.updateQualificacio(qualificacio, index);
             });
         }
+        event.stopPropagation();
     };
 
     qualificar (qualificacio, metode, callback) {
@@ -118,7 +121,8 @@ class TaulaAlumnes extends React.Component {
                 <TableHead>
                 <TableRow>
                     <TableCell>Alumne</TableCell>
-                    <TableCell style={{ textAlign: 'right' }}>Qualificacio</TableCell>
+                    
+                    <TableCell style={{ textAlign: 'right' }}>{this.state.activitat.avaluable && "Qualificacio"}</TableCell>
                 </TableRow>
                 </TableHead>
                 <TableBody>
@@ -127,6 +131,7 @@ class TaulaAlumnes extends React.Component {
                     <TableRow key={a.id}>
                         <TableCell>{a.nom} {a.congnom_1} {a.congnom_2}</TableCell>
                         <TableCell numeric>
+                        {this.state.activitat.avaluable && 
                         <TextField
                             autoFocus
                             margin="dense"
@@ -137,6 +142,7 @@ class TaulaAlumnes extends React.Component {
                             className={classes.textField}
                             onChange={(e) => this.handleChangeQualificacio(a, index, e)}
                         />
+                        }
                         </TableCell>
                     </TableRow>
                     );

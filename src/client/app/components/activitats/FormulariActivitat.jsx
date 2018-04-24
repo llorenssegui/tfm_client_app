@@ -25,7 +25,6 @@ export default class FormulariActivitat extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     this.setState({
         nom: nextProps.activitat ? nextProps.activitat.nom : "",
         avaluable: nextProps.activitat ? nextProps.activitat.avaluable : true,

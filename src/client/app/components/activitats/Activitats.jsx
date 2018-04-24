@@ -265,12 +265,11 @@ class Activitats extends React.Component {
                 _this.props.history.replace('/login');
             }
         }).then((qualificacions) => {
-            debugger;
             let alumnes = _this.state.alumnes;
             for(let al in _this.state.alumnes) {
                 let alumne = _this.state.alumnes[al];
                 let qualificacionsFiltrades = qualificacions.filter((qualificacio) => qualificacio.alumne === alumne.id);
-                alumnes[al].qualificacions = qualificacionsFiltrades;
+                alumnes[al].qualificacions = qualificacionsFiltrades ? qualificacionsFiltrades : [];
             }
             _this.setState({
                 alumnes: alumnes,
@@ -330,7 +329,7 @@ class Activitats extends React.Component {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     {this.state.alumnes.length > 0 && 
-                    <TaulaAlumnes alumnes={this.state.alumnes}/>
+                    <TaulaAlumnes alumnes={this.state.alumnes} activitat={a}/>
                     }
                     {this.state.alumnes.length <= 0 && 
                     <Typography className={classes.heading}>No hi ha alumnes matriculats</Typography>

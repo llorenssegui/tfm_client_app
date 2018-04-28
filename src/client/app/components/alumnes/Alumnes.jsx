@@ -18,6 +18,7 @@ import AddIcon from 'material-ui-icons/Add';
 import FormulariAlumne from './FormulariAlumne.jsx';
 import IconaEditar from '../iconaEditar/IconaEditar.jsx';
 import Utils from '../../utils.jsx';
+import TaulaActivitats from '../activitats/TaulaActivitats.jsx';
 
 const styles = theme => ({
     root: {
@@ -49,6 +50,7 @@ class Alumnes extends React.Component {
             missatge: "Alumne creat satisfactoriament",
             expanded: null,
             alumnes: [],
+            activitats: [],
             alumneSeleccionat: undefined,
             formulariObert: false,
             formulariModificar: false
@@ -59,6 +61,9 @@ class Alumnes extends React.Component {
 
     componentWillMount () {
         this.getAlumnes();
+        this.getActivitats(function(context) {
+            context.getQualificacions(context);
+        });
     }
     
     handleChange = panel => (event, expanded) => {
@@ -192,6 +197,67 @@ class Alumnes extends React.Component {
         });
     }
 
+    getActivitats (callback) {
+        let url = config.apiEndpoint + '/activitats/';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
+        }).then((activitats) => {
+            let activitatsFiltrats = activitats.filter((activitat) => activitat.trimestre == this.props.semestre);
+            this.setState({
+                activitats: activitatsFiltrats,
+            });
+            callback && callback(this);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+        });
+    }
+
+    getQualificacions (context) {
+        let _this = context ? context : this;
+        let url = config.apiEndpoint + '/qualificacions/';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': _this.Auth.getToken()
+            }
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json();
+            } else if (response.status === 401) {
+                _this.props.history.replace('/login');
+            }
+        }).then((qualificacions) => {
+            let activitats = _this.state.activitats;
+            for(let a in _this.state.activitats) {
+                let activitat = _this.state.activitats[a];
+                let qualificacionsFiltrades = qualificacions.filter((qualificacio) => qualificacio.activitat === activitat.id);
+                activitats[a].qualificacions = qualificacionsFiltrades ? qualificacionsFiltrades : [];
+            }
+            _this.setState({
+                activitats: activitats,
+            });
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                _this.props.history.replace('/login');
+            }
+        });
+    }
+
     tancarNotificacio () {
         this.setState({
             mostrarNotificacio: false
@@ -218,9 +284,11 @@ class Alumnes extends React.Component {
                     </Grid>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                    <Typography>
-                    Aquí anirien les qualificacions de cada activitat
-                    </Typography>
+                    <TaulaActivitats
+                        alumne={a}
+                        activitats={this.state.activitats}
+                        semestre={this.props.semestre}
+                    />
                 </ExpansionPanelDetails>
                 </ExpansionPanel>
                 );

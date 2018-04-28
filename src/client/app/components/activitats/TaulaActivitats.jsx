@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import config from '../../../../../config.js';
 import AuthService from '../../services/AuthService.jsx';
-import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import Table, { TableBody, TableCell, TableHead, TableRow, TableFooter } from 'material-ui/Table';
 import Avatar from 'material-ui/Avatar';
 import TextField from 'material-ui/TextField';
 
@@ -26,44 +26,44 @@ const styles = theme => ({
     },
 });
 
-class TaulaAlumnes extends React.Component {
+class TaulaActivitats extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            alumnes: this.props.alumnes,
-            activitat: this.props.activitat
+            activitats: this.props.activitats,
+            alumne: this.props.alumne
         };
         this.Auth = new AuthService();
     }
 
     componentWillMount () {
-        let alumnes = this.props.alumnes;
-        for(let i in alumnes) {
-            let alumne = alumnes[i];
+        let activitats = this.props.activitats;
+        /*for(let i in activitats) {
+            let alumne = activitats[i];
             if(alumne.qualificacions) {
-                let qualificacions = alumne.qualificacions.filter((qualificacio) => qualificacio.activitat == this.props.activitat.id);
-                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? qualificacions[0] : "";
+                let qualificacions = alumne.qualificacions.filter((qualificacio) => qualificacio.alumne == this.props.alumne.id);
+                activitats[i].qualificacioAlumne = qualificacions && qualificacions.length > 0 ? qualificacions[0] : "";
             }
-        }
+        }*/
         this.setState({
-            activitat: this.props.activitat,
-            alumnes: alumnes
+            alumne: this.props.alumne,
+            activitats: activitats
         })
     }
 
     componentWillReceiveProps (nextProps) {
-        let alumnes = nextProps.alumnes;
-        for(let i in alumnes) {
-            let alumne = alumnes[i];
-            if(alumne.qualificacions) {
-                let qualificacions = alumne.qualificacions.filter((qualificacio) => qualificacio.activitat == this.props.activitat.id);
-                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? qualificacions[0].qualificacio : "";
+        let activitats = nextProps.activitats;
+        /*for(let i in activitats) {
+            let activitat = activitats[i];
+            if(activitat.qualificacions) {
+                let qualificacions = activitat.qualificacions.filter((qualificacio) => qualificacio.alumne == this.props.alumne.id);
+                activitats[i].qualificacioAlumne = qualificacions && qualificacions.length > 0 ? qualificacions[0].qualificacio : "";
             }
-        }
+        }*/
         this.setState({
-            activitat: nextProps.activitat,
-            alumnes: alumnes
+            alumne: nextProps.alumne,
+            activitats: activitats
         })
     }
 
@@ -78,11 +78,11 @@ class TaulaAlumnes extends React.Component {
             alumne: alumne.id,
             activitat: this.state.activitat.id
         };
-        let alumnes = JSON.parse(JSON.stringify(this.state.alumnes));
-        alumnes[index].qualificacioActivitat = event.target.value !== "" ? Number(event.target.value) : "";
+        let activitats = JSON.parse(JSON.stringify(this.state.activitats));
+        activitats[index].qualificacioActivitat = event.target.value !== "" ? Number(event.target.value) : "";
         
         this.setState({
-            alumnes: alumnes
+            activitats: activitats
         });
         let metode = "POST";
         if(idQualificacio) {
@@ -91,7 +91,6 @@ class TaulaAlumnes extends React.Component {
         }
         if(event.target.value && event.target.value !== "" && Number(event.target.value) > 0) {
             this.qualificar(qualificacio, metode, function(context, qualificacio) {
-                debugger;
                 context.props.updateQualificacio(qualificacio, index);
             });
         }
@@ -124,6 +123,17 @@ class TaulaAlumnes extends React.Component {
         });
     }
 
+    obtenirQualificacio (activitat, alumne, qualificacions) {
+        debugger;
+        for(let key in qualificacions) {
+            let qualificacio = qualificacions[key];
+            if(qualificacio.activitat === activitat.id && qualificacio.alumne === alumne.id) {
+                return qualificacio.qualificacio;
+            }
+        }
+        return "";
+    }
+
     render() {
         const { classes } = this.props;
 
@@ -131,51 +141,44 @@ class TaulaAlumnes extends React.Component {
             <Table className={classes.table}>
                 <TableHead>
                 <TableRow>
-                    <TableCell>Alumne</TableCell>
-                    <TableCell style={{ textAlign: 'right' }}>{this.state.activitat.avaluable && "Qualificacio"}</TableCell>
-                    <TableCell style={{ textAlign: 'right' }}>{this.state.activitat.avaluable && ""}</TableCell>
+                    <TableCell>Activitat</TableCell>
+                    <TableCell style={{ textAlign: 'right' }}>Qualificacio</TableCell>
+                    <TableCell style={{ textAlign: 'right' }}></TableCell>
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {this.state.alumnes.map((a, index) => {
+                {this.state.activitats.map((a, index) => {
+                    let qualificacio = this.obtenirQualificacio(a, this.state.alumne, a.qualificacions);
                     return (
                     <TableRow key={a.id}>
-                        <TableCell>{a.nom} {a.congnom_1} {a.congnom_2}</TableCell>
+                        <TableCell>{a.nom}</TableCell>
                         <TableCell numeric>
-                        {this.state.activitat.avaluable && 
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="qualificacio"
-                            name="qualificacio"
-                            type="number"
-                            value={a.qualificacioActivitat}
-                            className={classes.textField}
-                            onChange={(e) => this.handleChangeQualificacio(a, index, e)}
-                        />
-                        }
+                            {a.avaluable && qualificacio != "" && qualificacio}
                         </TableCell>
-                        {!this.state.activitat.avaluable || a.qualificacioActivitat === "" &&
-                            <TableCell numeric padding="none" />
-                        }
-                        {this.state.activitat.avaluable && a.qualificacioActivitat != "" && a.qualificacioActivitat >= 5 &&
-                            <TableCell numeric padding="none"><Avatar className={classes.greenAvatar}>A</Avatar></TableCell>
-                        }
-                        {this.state.activitat.avaluable && a.qualificacioActivitat != "" && a.qualificacioActivitat < 5 &&
-                            <TableCell numeric padding="none"><Avatar className={classes.redAvatar}>S</Avatar></TableCell>
-                        }
+                        <TableCell numeric padding="none">
+                            {a.avaluable && qualificacio != "" && qualificacio >= 5 &&
+                            <Avatar className={classes.greenAvatar}>A</Avatar>
+                            }
+                            {a.avaluable && qualificacio != "" && qualificacio < 5 &&
+                            <Avatar className={classes.redAvatar}>S</Avatar>
+                            }
+                        </TableCell>
                     </TableRow>
                     );
                 })}
                 </TableBody>
+                <TableFooter>
+                    <TableRow>
+                    </TableRow>
+                </TableFooter>
             </Table>
         );
     }
 
 }
 
-TaulaAlumnes.propTypes = {
+TaulaActivitats.propTypes = {
     classes: PropTypes.object.isRequired,
 };
   
-export default withStyles(styles)(TaulaAlumnes);
+export default withStyles(styles)(TaulaActivitats);

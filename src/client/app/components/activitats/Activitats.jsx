@@ -304,17 +304,16 @@ class Activitats extends React.Component {
     }
 
     updateQualificacio (qualificacio, index) {
-        debugger;
-        let activitats = this.state.activitats;
-        let qualificacioTrobada = activitats.qualificacions.filter((q) => q.activitat === activitats[index].id);
+        let qualificacioTrobada = this.state.alumnes[index].qualificacions.filter((q) => q.activitat === this.state.alumnes[index].id);
         if(qualificacioTrobada && qualificacioTrobada.length === 1) {
-            let indexQualificacio =  activitats.qualificacions.indexOf(qualificacioTrobada[0]);
-            activitats.qualificacions[indexQualificacio] = qualificacio;
+            let indexQualificacio =  this.state.alumnes[index].qualificacions.indexOf(qualificacioTrobada[0]);
+            this.state.alumnes[index].qualificacions[indexQualificacio] = qualificacio;
         } else {
-            activitats.qualificacions.push(qualificacio);
+            this.state.alumnes[index].qualificacions.push(qualificacio);
         }
+
         this.setState({
-            activitats: activitats
+            alumnes: this.state.alumnes
         });
     }
 

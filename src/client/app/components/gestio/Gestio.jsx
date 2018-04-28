@@ -12,6 +12,7 @@ import Paper from 'material-ui/Paper';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Alumnes from '../alumnes/Alumnes.jsx';
 import Activitats from '../activitats/Activitats.jsx';
+import Accions from '../accionsGestio/Accions.jsx';
 
 const styles = theme => ({
     textField: {
@@ -30,6 +31,9 @@ const styles = theme => ({
         position: 'fixed',
         bottom: theme.spacing.unit * 3,
         right: theme.spacing.unit * 3,
+    },
+    actionButton: {
+        margin: theme.spacing.unit,
     },
 });
 
@@ -164,52 +168,66 @@ class Gestio extends React.Component {
         const { classes } = this.props;
         return(
             <div>
-                <Grid container spacing={24}>
-                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                        <TextField
-                            id="select-semestre-native"
-                            select
-                            label="Semestres"
-                            className={classes.textField}
-                            value={this.state.semestreSeleccionat}
-                            onChange={this.onChangeSemestre}
-                            SelectProps={{
-                                MenuProps: {
-                                native: "false",
-                                className: classes.menu,
-                                },
-                            }}
-                            helperText="Selecciona el semestre"
-                            margin="normal"
-                            >
-                            {this.state.semestres.map(option => (
-                                <MenuItem key={option.id} value={option.id}>
-                                {option.nom}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                        <TextField
-                            id="select-grup-native"
-                            select
-                            label="Grups"
-                            className={classes.textField}
-                            value={this.state.grupSeleccionat}
-                            onChange={this.onChangeGrup}
-                            SelectProps={{
-                                MenuProps: {
-                                native: "false",
-                                className: classes.menu,
-                                },
-                            }}
-                            helperText="Selecciona el grup"
-                            margin="normal"
-                            >
-                            {this.state.grups.map(option => (
-                                <MenuItem key={option.id} value={option.id}>
-                                {option.nom}
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                <Grid container>
+                    <Grid item xs={12} sm={12} md={12} lg={12} style={{textAlign: 'center', margin: '2px'}}>
+                        <Grid container>
+                            <Grid item xs={12} sm={12} md={6} lg={6}>
+                                <TextField
+                                    id="select-semestre-native"
+                                    select
+                                    label="Semestres"
+                                    className={classes.textField}
+                                    value={this.state.semestreSeleccionat}
+                                    onChange={this.onChangeSemestre}
+                                    SelectProps={{
+                                        MenuProps: {
+                                        native: "false",
+                                        className: classes.menu,
+                                        },
+                                    }}
+                                    helperText="Selecciona el semestre"
+                                    margin="normal"
+                                    >
+                                    {this.state.semestres.map(option => (
+                                        <MenuItem key={option.id} value={option.id}>
+                                        {option.nom}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                                <Accions 
+                                    objecte={this.state.semestreSeleccionat}
+                                    titolAccio={"Semestre"}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <TextField
+                                id="select-grup-native"
+                                select
+                                label="Grups"
+                                className={classes.textField}
+                                value={this.state.grupSeleccionat}
+                                onChange={this.onChangeGrup}
+                                SelectProps={{
+                                    MenuProps: {
+                                    native: "false",
+                                    className: classes.menu,
+                                    },
+                                }}
+                                helperText="Selecciona el grup"
+                                margin="normal"
+                                >
+                                {this.state.grups.map(option => (
+                                    <MenuItem key={option.id} value={option.id}>
+                                    {option.nom}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <Accions 
+                                objecte={this.state.grupSeleccionat}
+                                titolAccio={"Grup"}
+                            />
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
                 <Grid container spacing={24}>
@@ -217,10 +235,10 @@ class Gestio extends React.Component {
                     <Grid item xs={12} sm={12} md={10} lg={10}>
                         <Paper className={classes.paper}>
                         {this.state.valueTab == 0 &&
-                            <Activitats grup={this.state.grupSeleccionat} centre={this.state.idCentre} semestre={1}/>
+                            <Activitats grup={this.state.grupSeleccionat} centre={this.state.idCentre} semestre={this.state.semestreSeleccionat}/>
                         }
                         {this.state.valueTab == 1 &&
-                            <Alumnes grup={this.state.grupSeleccionat} centre={this.state.idCentre}/>
+                            <Alumnes grup={this.state.grupSeleccionat} centre={this.state.idCentre} semestre={this.state.semestreSeleccionat}/>
                         }
                         </Paper>
                     </Grid>

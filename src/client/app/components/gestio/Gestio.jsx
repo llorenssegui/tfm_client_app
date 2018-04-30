@@ -41,6 +41,9 @@ class Gestio extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.TITOL_SEMESTRE = "Semestre";
+        this.TITOL_GRUP = "Grup"
         this.state = {
             valueTab: 0,
             assignatura: undefined,
@@ -128,6 +131,35 @@ class Gestio extends React.Component {
         });
     }
 
+    gestionarGrups(context, objecte, callback) {
+        let id = "";
+        if(objecte.id) {
+            id = objecte.id + "/";
+        }
+        let url = config.apiEndpoint + '/grups/' + id;
+        fetch(url, {
+            method: objecte.id ? "PUT" : "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': context.Auth.getToken()
+            },
+            body: JSON.stringify(objecte)
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json();
+            } else if (response.status === 401) {
+                context.props.history.replace('/login');
+            }
+        }).then((grup) => {
+            if(grup) callback(grup, context);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                context.props.history.replace('/login');
+            }
+        });
+    }
+
     getTrimestres(context, callback) {
         let url = config.apiEndpoint + '/trimestres/';
         fetch(url, {
@@ -152,6 +184,36 @@ class Gestio extends React.Component {
         });
     }
 
+    gestionarTrimestres(context, objecte, callback) {
+        let id = "";
+        if(objecte.id) {
+            id = objecte.id + "/";
+        }
+        if(!objecte.assignatura) objecte.assignatura = this.state.assignatura.id;
+        let url = config.apiEndpoint + '/trimestres/' + id;
+        fetch(url, {
+            method: objecte.id ? "PUT" : "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': context.Auth.getToken()
+            },
+            body: JSON.stringify(objecte)
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json();
+            } else if (response.status === 401) {
+                context.props.history.replace('/login');
+            }
+        }).then((trimestre) => {
+            if(trimestre) callback(trimestre, context);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                context.props.history.replace('/login');
+            }
+        });
+    }
+
     onChangeGrup = event => {
         this.setState({ grupSeleccionat: event.target.value });
     };
@@ -163,6 +225,48 @@ class Gestio extends React.Component {
     handleChangeTab = (event, value) => {
         this.setState({ valueTab: value });
     };
+
+    processarGrupsSemestres (objecte, titol) {
+        if(titol === this.TITOL_SEMESTRE) {
+            this.gestionarTrimestres(this, objecte, function (semestre, context) {
+                if(objecte.id) {
+                    let semestres = context.state.semestres;
+                    semestres.map(function(s) {
+                        if(objecte.id === s.id) {
+                            s.nom = semestre.nom;
+                            return;
+                        }
+                    });
+                    context.setState({
+                        semestres: semestres
+                    });
+                } else {
+                    context.setState({
+                        semestres: context.state.semestres.concat([semestre])
+                    });
+                }
+            });
+        } else if (titol === this.TITOL_GRUP) {
+            this.gestionarGrup(this, objecte, function (grup, context) {
+                if(objecte.id) {
+                    let grups = context.state.grups;
+                    grups.map(function(g) {
+                        if(objecte.id === g.id) {
+                            s.nom = grup.nom;
+                            return;
+                        }
+                    });
+                    context.setState({
+                        grups: grups
+                    });
+                } else {
+                    context.setState({
+                        grups: context.state.grups.concat([grup])
+                    });
+                }
+            });
+        }
+    }
 
     render () {
         const { classes } = this.props;
@@ -195,8 +299,9 @@ class Gestio extends React.Component {
                                     ))}
                                 </TextField>
                                 <Accions 
-                                    objecte={this.state.semestreSeleccionat}
-                                    titolAccio={"Semestre"}
+                                    objecte={this.state.semestres.filter((semestre) => semestre.id === this.state.semestreSeleccionat)[0]}
+                                    titolAccio={this.TITOL_SEMESTRE}
+                                    precessarAccio={this.processarGrupsSemestres.bind(this)}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={6} lg={6}>
@@ -223,8 +328,9 @@ class Gestio extends React.Component {
                                 ))}
                             </TextField>
                             <Accions 
-                                objecte={this.state.grupSeleccionat}
-                                titolAccio={"Grup"}
+                                objecte={this.state.grups.filter((grup) => grup.id === this.state.grupSeleccionat)[0]}
+                                titolAccio={this.TITOL_GRUP}
+                                precessarAccio={this.processarGrupsSemestres.bind(this)}
                             />
                             </Grid>
                         </Grid>

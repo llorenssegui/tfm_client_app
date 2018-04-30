@@ -24,7 +24,16 @@ class Accions extends React.Component {
         }
     }
 
+    componentWillMount() {
+        this.setState({
+            objecte: this.objecte ? this.objecte : undefined,
+            objecteEditar: undefined,
+            formulariObert: false
+        });
+    }
+
     componentWillReceiveProps (nextProps) {
+        debugger;
         this.setState({
             objecte: nextProps.objecte ? nextProps.objecte : undefined,
             objecteEditar: undefined,
@@ -33,6 +42,7 @@ class Accions extends React.Component {
     }
 
     accioEditar () {
+        debugger;
         this.setState({
             objecteEditar: this.state.objecte,
             formulariObert: true
@@ -47,6 +57,7 @@ class Accions extends React.Component {
     }
 
     processarAccio (objecte) {
+        debugger;
         this.props.precessarAccio(objecte, this.props.titolAccio);
         this.tancarFormulari();
     }
@@ -61,7 +72,7 @@ class Accions extends React.Component {
     render () {
         const { classes } = this.props;
         return (
-            <div style={{textAlign: 'right', width: 400}}>
+            <div style={{textAlign: 'center'}}>
                 <Button variant="fab" mini color="secondary" aria-label="add" className={classes.button} onClick={this.accioEditar.bind(this)}>
                     <Icon>edit_icon</Icon>
                 </Button>
@@ -70,7 +81,7 @@ class Accions extends React.Component {
                 </Button>
                 <FormulariAccio 
                     open={this.state.formulariObert}
-                    objecte={this.state.objecte}
+                    objecte={this.state.objecteEditar}
                     titolAccio={this.props.titolAccio}
                     accioProcessarFormulari={this.processarAccio.bind(this)}
                     handleClose={this.tancarFormulari.bind(this)}

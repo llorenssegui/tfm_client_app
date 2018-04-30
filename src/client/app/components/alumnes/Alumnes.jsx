@@ -53,7 +53,8 @@ class Alumnes extends React.Component {
             activitats: [],
             alumneSeleccionat: undefined,
             formulariObert: false,
-            formulariModificar: false
+            formulariModificar: false,
+            semestre: this.props.semestre
         };
         this.Auth = new AuthService();
         this.utils = new Utils();
@@ -61,6 +62,15 @@ class Alumnes extends React.Component {
 
     componentWillMount () {
         this.getAlumnes();
+        this.getActivitats(function(context) {
+            context.getQualificacions(context);
+        });
+    }
+
+    componentWillReceiveProps (nextProps) {
+        this.setState({
+            semestre: nextProps.semestre
+        });
         this.getActivitats(function(context) {
             context.getQualificacions(context);
         });
@@ -212,7 +222,7 @@ class Alumnes extends React.Component {
                 this.props.history.replace('/login');
             }
         }).then((activitats) => {
-            let activitatsFiltrats = activitats.filter((activitat) => activitat.trimestre == this.props.semestre);
+            let activitatsFiltrats = activitats.filter((activitat) => activitat.trimestre == this.state.semestre);
             this.setState({
                 activitats: activitatsFiltrats,
             });
@@ -287,7 +297,7 @@ class Alumnes extends React.Component {
                     <TaulaActivitats
                         alumne={a}
                         activitats={this.state.activitats}
-                        semestre={this.props.semestre}
+                        semestre={this.state.semestre}
                     />
                 </ExpansionPanelDetails>
                 </ExpansionPanel>

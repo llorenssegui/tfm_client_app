@@ -155,7 +155,7 @@ class FormulariCrearAssignatura extends React.Component {
 
 FormulariCrearAssignatura.propTypes = {
     classes: PropTypes.object.isRequired,
-  };
-  
-  export default withStyles(styles)(FormulariCrearAssignatura);
+};
+
+export default withStyles(styles)(FormulariCrearAssignatura);
 

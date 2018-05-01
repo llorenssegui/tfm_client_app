@@ -6,6 +6,7 @@ import AuthService from '../../services/AuthService.jsx';
 import Table, { TableBody, TableCell, TableHead, TableRow, TableFooter } from 'material-ui/Table';
 import Avatar from 'material-ui/Avatar';
 import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
 
 const styles = theme => ({
     table: {
@@ -24,6 +25,11 @@ const styles = theme => ({
         color: '#fff',
         backgroundColor: '#F44336',
     },
+    mobileHide: {
+        [theme.breakpoints.down('xs')]: {
+            display: 'none',
+        },
+    }
 });
 
 class TaulaActivitats extends React.Component {
@@ -124,26 +130,37 @@ class TaulaActivitats extends React.Component {
     }
 
     obtenirQualificacio (activitat, alumne, qualificacions) {
-        debugger;
         for(let key in qualificacions) {
             let qualificacio = qualificacions[key];
             if(qualificacio.activitat === activitat.id && qualificacio.alumne === alumne.id) {
-                return qualificacio.qualificacio;
+                return qualificacio;
             }
         }
-        return "";
+        return undefined;
+    }
+
+    calcularQualificacio (activitats) {
+        let qualificacioFinal = 0;
+        for(let key in activitats) {
+            let activitat = activitats[key];
+            let qualificacio = this.obtenirQualificacio(activitat, this.state.alumne, activitat.qualificacions);
+            if(qualificacio && qualificacio.qualificacio != "" && activitat.avaluable) {
+                qualificacioFinal += ((activitat.ponderacio/100) * qualificacio.qualificacio);
+            }
+        }
+        return qualificacioFinal;
     }
 
     render() {
         const { classes } = this.props;
-
+        
         return(
             <Table className={classes.table}>
                 <TableHead>
                 <TableRow>
                     <TableCell>Activitat</TableCell>
                     <TableCell style={{ textAlign: 'right' }}>Qualificacio</TableCell>
-                    <TableCell style={{ textAlign: 'right' }}></TableCell>
+                    <TableCell style={{ textAlign: 'right' }} className={classes.mobileHide}></TableCell>
                 </TableRow>
                 </TableHead>
                 <TableBody>
@@ -153,13 +170,14 @@ class TaulaActivitats extends React.Component {
                     <TableRow key={a.id}>
                         <TableCell>{a.nom}</TableCell>
                         <TableCell numeric>
-                            {a.avaluable && qualificacio != "" && qualificacio}
+                            {a.avaluable && qualificacio && qualificacio.qualificacio != "" && qualificacio.qualificacio}
+                            {a.avaluable && (!qualificacio || qualificacio == null || qualificacio.qualificacio == "") && "No avaluada"}
                         </TableCell>
-                        <TableCell numeric padding="none">
-                            {a.avaluable && qualificacio != "" && qualificacio >= 5 &&
+                        <TableCell numeric padding="none" className={classes.mobileHide}>
+                            {a.avaluable && qualificacio && qualificacio.qualificacio != "" && qualificacio.qualificacio >= 5 &&
                             <Avatar className={classes.greenAvatar}>A</Avatar>
                             }
-                            {a.avaluable && qualificacio != "" && qualificacio < 5 &&
+                            {a.avaluable && qualificacio && qualificacio.qualificacio != "" && qualificacio.qualificacio < 5 &&
                             <Avatar className={classes.redAvatar}>S</Avatar>
                             }
                         </TableCell>
@@ -169,6 +187,20 @@ class TaulaActivitats extends React.Component {
                 </TableBody>
                 <TableFooter>
                     <TableRow>
+                        <TableCell/>
+                        <TableCell numeric>
+                            <Typography>
+                                <b>Mitjana:</b> {this.calcularQualificacio(this.state.activitats)}
+                            </Typography>
+                        </TableCell>
+                        <TableCell numeric padding="none" className={classes.mobileHide}>
+                            {this.calcularQualificacio(this.state.activitats) >= 5 &&
+                            <Avatar className={classes.greenAvatar}>A</Avatar>
+                            }
+                            {this.calcularQualificacio(this.state.activitats) < 5 &&
+                            <Avatar className={classes.redAvatar}>S</Avatar>
+                            }
+                        </TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>

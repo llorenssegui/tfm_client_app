@@ -33,7 +33,6 @@ class Accions extends React.Component {
     }
 
     componentWillReceiveProps (nextProps) {
-        debugger;
         this.setState({
             objecte: nextProps.objecte ? nextProps.objecte : undefined,
             objecteEditar: undefined,
@@ -42,7 +41,6 @@ class Accions extends React.Component {
     }
 
     accioEditar () {
-        debugger;
         this.setState({
             objecteEditar: this.state.objecte,
             formulariObert: true
@@ -57,7 +55,6 @@ class Accions extends React.Component {
     }
 
     processarAccio (objecte) {
-        debugger;
         this.props.precessarAccio(objecte, this.props.titolAccio);
         this.tancarFormulari();
     }

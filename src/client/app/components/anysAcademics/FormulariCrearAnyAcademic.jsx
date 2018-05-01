@@ -1,6 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
+import Select from 'material-ui/Select';
+import { MenuItem } from 'material-ui/Menu';
 
 import Dialog, {
   DialogActions,
@@ -9,7 +13,18 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 
-export default class FormulariCrearAnyAcademic extends React.Component {
+const styles = theme => ({
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
+  },
+  menu: {
+    width: 200,
+  },
+});
+
+class FormulariCrearAnyAcademic extends React.Component {
 
   constructor(props) {
     super(props);
@@ -24,8 +39,18 @@ export default class FormulariCrearAnyAcademic extends React.Component {
     this.state = {
       anyFi: anyFi,
       anyInici: anyInici,
-      modeModificar: modeModificar
+      modeModificar: modeModificar,
+      anys: []
     };
+  }
+
+  componentWillMount () {
+    let any = Number(new Date().getFullYear());
+    let anys = [any];
+    for(let i = 0; i < 10; i++) {
+      anys.push(anys[anys.length - 1] + 1);
+    }
+    this.setState({anys: anys});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -64,6 +89,7 @@ export default class FormulariCrearAnyAcademic extends React.Component {
   }
 
   render() {
+    const { classes } = this.props;
     return (
         <Dialog
           open={this.props.open}
@@ -76,27 +102,49 @@ export default class FormulariCrearAnyAcademic extends React.Component {
               Formulari per a la {this.state.modeModificar ? 'actualització' : 'creació'} d'un any acadèmic
             </DialogContentText>
             <TextField
-              autoFocus
-              margin="dense"
-              id="anyInici"
-              name="anyInici"
+              id="select-anyInici-native"
+              select
               label="Any d'inici"
-              type="number"
+              className={classes.textField}
               value={this.state.anyInici}
               onChange={this.onChangeAnyIniciInputText.bind(this)}
-              fullWidth
-            />
+              SelectProps={{
+                MenuProps: {
+                  native: "false",
+                  className: classes.menu,
+                },
+              }}
+              helperText="Selecciona l'any acadèmic"
+              margin="normal"
+            >
+              {this.state.anys.map((option, index) => (
+                <MenuItem key={index} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
-              autoFocus
-              margin="dense"
-              id="anyFi"
-              name="anyFi"
-              label="Any de finalitzacio"
-              type="number"
+              id="select-anyFi-native"
+              select
+              label="Any de fi"
+              className={classes.textField}
               value={this.state.anyFi}
               onChange={this.onChangeAnyFiInputText.bind(this)}
-              fullWidth
-            />
+              SelectProps={{
+                MenuProps: {
+                  native: "false",
+                  className: classes.menu,
+                },
+              }}
+              helperText="Selecciona l'any acadèmic"
+              margin="normal"
+            >
+              {this.state.anys.map((option, index) => (
+                <MenuItem key={index} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.props.handleClose} color="primary">
@@ -110,4 +158,10 @@ export default class FormulariCrearAnyAcademic extends React.Component {
     );
   }
 }
+
+FormulariCrearAnyAcademic.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(FormulariCrearAnyAcademic);
 

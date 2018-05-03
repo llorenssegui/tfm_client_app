@@ -7,6 +7,7 @@ import AuthService from '../../services/AuthService.jsx';
 import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 import Grid from 'material-ui/Grid';
 import Notificacio from '../notificacions/Notificacio.jsx';
+import AlertDialog from '../dialogs/AlertDialog.jsx';
 import ExpansionPanel, {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
@@ -55,7 +56,8 @@ class Alumnes extends React.Component {
             alumneSeleccionat: undefined,
             formulariObert: false,
             formulariModificar: false,
-            semestre: this.props.semestre
+            semestre: this.props.semestre,
+            alertaObertaEliminar: false
         };
         this.Auth = new AuthService();
         this.utils = new Utils();
@@ -92,9 +94,12 @@ class Alumnes extends React.Component {
         event.stopPropagation();
     };
 
-    eliminarAlumne = index => (event) => {
-        
-    };
+    tancarAlertDialogEliminar() {
+        this.setState({
+            alumneSeleccionat: undefined,
+            alertaObertaEliminar: false
+        });
+    }
 
     onProcessarFormulari (alumne, idAlumne) {
         if(alumne && alumne.nom !== "" && alumne.congnom_1 !== "" && alumne.congnom_2 !== "") {
@@ -278,6 +283,43 @@ class Alumnes extends React.Component {
             mostrarNotificacio: false
         });
     }
+
+    eliminarAlumne () {
+        let url = config.apiEndpoint + '/alumnes/' + this.state.alumneSeleccionat.id + '/';
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        }).then(response => {
+            if(response.status === 200 || response.status === 201) {
+            return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
+        }).then((alumne) => {
+            let alumnes = this.state.alumnes.filter((alumne) => alumne.id !== this.state.alumneSeleccionat.id)
+            this.setState({
+                alumnes: alumnes,
+                alertaObertaEliminar: false,
+                alumneSeleccionat: undefined
+            });
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+        });
+    }
+
+    obrirAlertaEliminar = index => (event, expanded) => {
+        this.setState({
+            alumneSeleccionat: this.state.alumnes[index],
+            alertaObertaEliminar: true
+        });
+        event.stopPropagation();
+    }
     
     render() {
         const { classes } = this.props;
@@ -291,7 +333,7 @@ class Alumnes extends React.Component {
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Grid container>
                         <Grid item xs={1}>
-                            <div style={{right: 0}} onClick={this.eliminarAlumne(index)}>
+                            <div style={{right: 0}} onClick={this.obrirAlertaEliminar(index)}>
                                 <DeleteIcon />
                             </div>
                         </Grid>
@@ -326,6 +368,12 @@ class Alumnes extends React.Component {
                 open={this.state.mostrarNotificacio}
                 missatge={this.state.missatge}
                 onCloseNotificacio={this.tancarNotificacio.bind(this)}
+            />
+            <AlertDialog 
+                missatge={"Segur que vols eliminar l'alumne seleccionat?"}
+                open={this.state.alertaObertaEliminar}
+                onCloseDialog={this.tancarAlertDialogEliminar.bind(this)}
+                confirmarAccio={this.eliminarAlumne.bind(this)}
             />
             <Button onClick={this.obrirFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                 <AddIcon />

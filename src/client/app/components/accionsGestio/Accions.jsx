@@ -20,7 +20,8 @@ class Accions extends React.Component {
         this.state = {
             objecte: this.props.objecte ? this.props.objecte : undefined,
             objecteEditar: undefined,
-            formulariObert: false
+            formulariObert: false,
+            edicio: this.props.edicio ? this.props.edicio : true
         }
     }
 
@@ -36,7 +37,8 @@ class Accions extends React.Component {
         this.setState({
             objecte: nextProps.objecte ? nextProps.objecte : undefined,
             objecteEditar: undefined,
-            formulariObert: false
+            formulariObert: false,
+            edicio: nextProps.edicio ? nextProps.edicio : true
         });
     }
 
@@ -70,9 +72,11 @@ class Accions extends React.Component {
         const { classes } = this.props;
         return (
             <div style={{textAlign: 'center'}}>
+                {this.props.edicio === true &&
                 <Button variant="fab" mini color="secondary" aria-label="add" className={classes.button} onClick={this.accioEditar.bind(this)}>
                     <Icon>edit_icon</Icon>
                 </Button>
+                }
                 <Button variant="fab" mini color="secondary" aria-label="add" className={classes.button} onClick={this.accioAfegir.bind(this)}>
                     <AddIcon />
                 </Button>

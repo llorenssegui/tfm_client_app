@@ -16,6 +16,7 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
 import FormulariActivitat from './FormulariActivitat.jsx';
 import IconaEditar from '../iconaEditar/IconaEditar.jsx';
 import Utils from '../../utils.jsx';
@@ -48,6 +49,7 @@ class Activitats extends React.Component {
         this.state = {
             mostrarNotificacio: false,
             alertaOberta: false,
+            alertaObertaEliminar: false,
             missatge: "Activitat creada satisfactoriament",
             expanded: null,
             activitats: [],
@@ -77,13 +79,15 @@ class Activitats extends React.Component {
         this.setState({
             expanded: expanded ? panel : false,
         });
-        /*this.getActivitats();
-        this.getAlumnes(function(context) {
-            context.getQualificacions(context);
-            context.setState({
-                expanded: expanded ? panel : false,
+        if(!expanded) {
+            this.getActivitats();
+            this.getAlumnes(function(context) {
+                context.getQualificacions(context);
+                context.setState({
+                    expanded: expanded ? panel : false,
+                });
             });
-        });*/
+        }
     };
 
     openEditarActivitat = index => (event, expanded) => {
@@ -93,6 +97,51 @@ class Activitats extends React.Component {
             formulariModificar: true,
         });
         event.stopPropagation();
+    };
+
+    tancarAlertDialogEliminar() {
+        this.setState({
+            activitatSeleccionada: undefined,
+            alertaObertaEliminar: false
+        });
+    }
+
+    obrirAlertaEliminar = index => (event, expanded) => {
+        this.setState({
+            activitatSeleccionada: this.state.activitats[index],
+            alertaObertaEliminar: true
+        });
+        event.stopPropagation();
+    };
+
+    eliminarActivitat () {
+        let url = config.apiEndpoint + '/activitats/' + this.state.activitatSeleccionada.id + '/';
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.Auth.getToken()
+            }
+        }).then(response => {
+            if(response.status === 200 || response.status === 201) {
+            return response.json();
+            } else if (response.status === 401) {
+                this.props.history.replace('/login');
+            }
+        }).then((grup) => {
+            debugger;
+            let activitats = this.state.activitats.filter((activitat) => activitat.id !== this.state.activitatSeleccionada.id)
+            this.setState({
+                activitats: activitats,
+                alertaObertaEliminar: false,
+                activitatSeleccionada: undefined
+            });
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                this.props.history.replace('/login');
+            }
+        });
     };
 
     onProcessarFormulari (activitat, idActivitat) {
@@ -304,16 +353,17 @@ class Activitats extends React.Component {
     }
 
     updateQualificacio (qualificacio, index) {
-        let qualificacioTrobada = this.state.alumnes[index].qualificacions.filter((q) => q.activitat === this.state.alumnes[index].id);
+        let alumnes = this.state.alumne;
+        let qualificacioTrobada = alumnes[index].qualificacions.filter((q) => q.activitat === alumnes[index].id);
         if(qualificacioTrobada && qualificacioTrobada.length === 1) {
-            let indexQualificacio =  this.state.alumnes[index].qualificacions.indexOf(qualificacioTrobada[0]);
-            this.state.alumnes[index].qualificacions[indexQualificacio] = qualificacio;
+            let indexQualificacio = alumnes[index].qualificacions.indexOf(qualificacioTrobada[0]);
+            alumnes[index].qualificacions[indexQualificacio] = qualificacio;
         } else {
-            this.state.alumnes[index].qualificacions.push(qualificacio);
+            lumnes[index].qualificacions.push(qualificacio);
         }
 
         this.setState({
-            alumnes: this.state.alumnes
+            alumnes: alumnes
         });
     }
 
@@ -340,8 +390,13 @@ class Activitats extends React.Component {
                 <ExpansionPanel expanded={expanded === index} onChange={this.handleChange(index)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Grid container>
-                        <Grid item xs={11}>
-                            <Typography className={classes.heading}><b>{a.nom}</b>{a.avaluable && "  |  " + "Ponderació: " + a.ponderacio + " %" }</Typography>
+                        <Grid item xs={1}>
+                            <div style={{right: 0}} onClick={this.obrirAlertaEliminar(index)}>
+                                <DeleteIcon />
+                            </div>
+                        </Grid>
+                        <Grid item xs={10}>
+                            <Typography className={classes.heading}><b>{a.nom}</b>{a.avaluable && "  |  " + "Ponderació: " + a.ponderacio + " %" }{!a.avaluable && "  |  " + "No avaluable" }</Typography>
                         </Grid>
                         <Grid item xs={1}>
                             <div style={{right: 0}} onClick={this.openEditarActivitat(index)}><IconaEditar /></div>
@@ -383,6 +438,12 @@ class Activitats extends React.Component {
                 open={this.state.alertaOberta}
                 onCloseDialog={this.tancarAlertDialog.bind(this)}
                 confirmarAccio={this.tancarAlertDialog.bind(this)}
+            />
+            <AlertDialog 
+                missatge={"Segur que vols eliminar l'activitat seleccionada?"}
+                open={this.state.alertaObertaEliminar}
+                onCloseDialog={this.tancarAlertDialogEliminar.bind(this)}
+                confirmarAccio={this.eliminarActivitat.bind(this)}
             />
             <Button onClick={this.obrirFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                 <AddIcon />

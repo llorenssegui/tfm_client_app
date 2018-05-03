@@ -12,7 +12,7 @@ const styles = theme => ({
       width: '100%',
     },
     textField: {
-        width: '40px'
+        width: '60px'
     },
     greenAvatar: {
         padding: 0,
@@ -43,7 +43,7 @@ class TaulaAlumnes extends React.Component {
             let alumne = alumnes[i];
             if(alumne.qualificacions) {
                 let qualificacions = alumne.qualificacions.filter((qualificacio) => qualificacio.activitat == this.props.activitat.id);
-                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? qualificacions[0] : "";
+                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? Number(qualificacions[0].qualificacio) : "";
             }
         }
         this.setState({
@@ -57,8 +57,8 @@ class TaulaAlumnes extends React.Component {
         for(let i in alumnes) {
             let alumne = alumnes[i];
             if(alumne.qualificacions) {
-                let qualificacions = alumne.qualificacions.filter((qualificacio) => qualificacio.activitat == this.props.activitat.id);
-                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? qualificacions[0].qualificacio : "";
+                let qualificacions = alumne.qualificacions.filter((qualificacio) => qualificacio.activitat == nextProps.activitat.id);
+                alumnes[i].qualificacioActivitat = qualificacions && qualificacions.length > 0 ? Number(qualificacions[0].qualificacio) : "";
             }
         }
         this.setState({
@@ -74,12 +74,12 @@ class TaulaAlumnes extends React.Component {
         }
         let idQualificacio = qualificacions && qualificacions.length > 0 ? qualificacions[0].id : undefined;
         let qualificacio = {
-            qualificacio: event.target.value !== "" ? Number(event.target.value) : "",
+            qualificacio: alumne.qualificacioActivitat,
             alumne: alumne.id,
             activitat: this.state.activitat.id
         };
-        let alumnes = JSON.parse(JSON.stringify(this.state.alumnes));
-        alumnes[index].qualificacioActivitat = event.target.value !== "" ? Number(event.target.value) : "";
+        let alumnes = this.state.alumnes;
+        //alumnes[index].qualificacioActivitat = event.target.value !== "" ? Number(event.target.value) : "";
         
         this.setState({
             alumnes: alumnes
@@ -96,6 +96,12 @@ class TaulaAlumnes extends React.Component {
         }
         event.stopPropagation();
     };
+
+    changeInputQualificacio (index, event) {
+        let alumnes = this.state.alumnes;
+        alumnes[index].qualificacioActivitat = event.target.value !== "" ? Number(event.target.value) : "";
+        this.setState({alumnes: alumnes});
+    }
 
     qualificar (qualificacio, metode, callback) {
         let idURL = qualificacio.id ? qualificacio.id + "/" : "";
@@ -150,7 +156,8 @@ class TaulaAlumnes extends React.Component {
                             type="number"
                             value={a.qualificacioActivitat}
                             className={classes.textField}
-                            onChange={(e) => this.handleChangeQualificacio(a, index, e)}
+                            onChange={(e) => this.changeInputQualificacio(index, e)}
+                            onBlur={(e) => this.handleChangeQualificacio(a, index, e)}
                         />
                         }
                         </TableCell>

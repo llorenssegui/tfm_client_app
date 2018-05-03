@@ -15,6 +15,7 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
 import FormulariAlumne from './FormulariAlumne.jsx';
 import IconaEditar from '../iconaEditar/IconaEditar.jsx';
 import Utils from '../../utils.jsx';
@@ -89,6 +90,10 @@ class Alumnes extends React.Component {
             formulariModificar: true,
         });
         event.stopPropagation();
+    };
+
+    eliminarAlumne = index => (event) => {
+        
     };
 
     onProcessarFormulari (alumne, idAlumne) {
@@ -285,7 +290,12 @@ class Alumnes extends React.Component {
                 <ExpansionPanel expanded={expanded === index} onChange={this.handleChange(index)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Grid container>
-                        <Grid item xs={11}>
+                        <Grid item xs={1}>
+                            <div style={{right: 0}} onClick={this.eliminarAlumne(index)}>
+                                <DeleteIcon />
+                            </div>
+                        </Grid>
+                        <Grid item xs={10}>
                             <Typography className={classes.heading}>{a.nom} {a.congnom_1} {a.congnom_2}</Typography>
                         </Grid>
                         <Grid item xs={1}>

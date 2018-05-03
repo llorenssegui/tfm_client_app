@@ -271,6 +271,10 @@ class FormulariGrups extends React.Component {
       }
     }
 
+    teGrupPerDefecte(grups) {
+      return grups.length < 1 || (grups && grups.length === 1 && grups[0] && grups[0].label && grups[0].label.toLowerCase() === "default");
+    }
+
     render() {
         const { classes } = this.props;
         return (
@@ -349,7 +353,7 @@ class FormulariGrups extends React.Component {
                     </Grid>
                     <Grid container className={classes.chipContainer}>
                       <Grid item xs={12}>
-                      {this.state.grups.length < 1 &&
+                      {this.teGrupPerDefecte(this.state.grups) &&
                         <Typography variant="caption" gutterBottom>
                             El curs seleccionat no te grups associats. Pots crear-los a través d'aquest formulari.
                         </Typography>

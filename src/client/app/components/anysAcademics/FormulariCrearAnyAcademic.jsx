@@ -45,7 +45,7 @@ class FormulariCrearAnyAcademic extends React.Component {
   }
 
   componentWillMount () {
-    let any = Number(new Date().getFullYear());
+    let any = Number(new Date().getFullYear()) - 1;
     let anys = [any];
     for(let i = 0; i < 10; i++) {
       anys.push(anys[anys.length - 1] + 1);

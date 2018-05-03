@@ -228,6 +228,9 @@ class Gestio extends React.Component {
 
     processarGrupsSemestres (objecte, titol) {
         if(titol === this.TITOL_SEMESTRE) {
+            if(!objecte.assignatura) {
+                objecte.assignatura = this.state.assignatura.id;
+            }
             this.gestionarTrimestres(this, objecte, function (semestre, context) {
                 if(objecte.id) {
                     let semestres = context.state.semestres;
@@ -247,12 +250,18 @@ class Gestio extends React.Component {
                 }
             });
         } else if (titol === this.TITOL_GRUP) {
-            this.gestionarGrup(this, objecte, function (grup, context) {
+            if(!objecte.curs) {
+                objecte.curs = this.state.assignatura.curs;
+            }
+            if(!objecte.centre) {
+                objecte.centre = this.state.idCentre;
+            }
+            this.gestionarGrups(this, objecte, function (grup, context) {
                 if(objecte.id) {
                     let grups = context.state.grups;
                     grups.map(function(g) {
                         if(objecte.id === g.id) {
-                            s.nom = grup.nom;
+                            g.nom = grup.nom;
                             return;
                         }
                     });
@@ -267,6 +276,10 @@ class Gestio extends React.Component {
             });
         }
     }
+
+    teGrupPerDefecte(grups) {
+        return grups.length < 1 || (grups && grups.length === 1 && grups[0] && grups[0].nom && grups[0].nom.toLowerCase() === "default");
+      }
 
     render () {
         const { classes } = this.props;
@@ -302,6 +315,7 @@ class Gestio extends React.Component {
                                     objecte={this.state.semestres.filter((semestre) => semestre.id === this.state.semestreSeleccionat)[0]}
                                     titolAccio={this.TITOL_SEMESTRE}
                                     precessarAccio={this.processarGrupsSemestres.bind(this)}
+                                    edicio={true}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={6} lg={6}>
@@ -331,6 +345,7 @@ class Gestio extends React.Component {
                                 objecte={this.state.grups.filter((grup) => grup.id === this.state.grupSeleccionat)[0]}
                                 titolAccio={this.TITOL_GRUP}
                                 precessarAccio={this.processarGrupsSemestres.bind(this)}
+                                edicio={!this.teGrupPerDefecte(this.state.grups)}
                             />
                             </Grid>
                         </Grid>

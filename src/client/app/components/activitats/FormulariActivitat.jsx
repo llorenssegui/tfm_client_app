@@ -3,6 +3,7 @@ import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import Switch from 'material-ui/Switch';
 import { FormGroup, FormControlLabel } from 'material-ui/Form';
+import { MenuItem } from 'material-ui/Menu';
 
 import Dialog, {
   DialogActions,
@@ -18,27 +19,29 @@ export default class FormulariActivitat extends React.Component {
     this.state = {
       nom: this.props.activitat ? this.props.activitat.nom : "",
       avaluable: this.props.activitat ? this.props.activitat.avaluable : true,
-      semestre: this.props.activitat ? this.props.activitat.semestre : 0,
+      semestre: this.props.activitat ? this.props.activitat.trimestre : this.props.semestre,
       ponderacio: this.props.activitat ? this.props.activitat.ponderacio : 0,
       modeModificar: this.props.modeModificar ? this.props.modeModificar : false
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    debugger;
     this.setState({
         nom: nextProps.activitat ? nextProps.activitat.nom : "",
         avaluable: nextProps.activitat ? nextProps.activitat.avaluable : true,
-        semestre: nextProps.activitat ? nextProps.activitat.semestre : 0,
+        semestre: nextProps.activitat ? nextProps.activitat.trimestre : nextProps.semestre,
         ponderacio: nextProps.activitat ? nextProps.activitat.ponderacio : 0,
         modeModificar: nextProps.modeModificar ? nextProps.modeModificar : false
     });
   }
 
   onClickProcessarFormulari() {
+    debugger;
     let activitat = {
         nom: this.state.nom,
         avaluable: this.state.avaluable,
-        trimestre: this.props.semestre,
+        trimestre: this.state.semestre,
         ponderacio: Number(this.state.ponderacio),
     };
     let idActivitat = this.props.activitat ? this.props.activitat.id : undefined;
@@ -56,6 +59,11 @@ export default class FormulariActivitat extends React.Component {
   onChangeAvaluable () {
     this.setState({avaluable: !this.state.avaluable});
   }
+
+  onChangeSemestre = event => {
+    debugger;
+    this.setState({ semestre: event.target.value });
+  };
 
   render() {
     return (
@@ -102,6 +110,28 @@ export default class FormulariActivitat extends React.Component {
               onChange={this.onChangePonderacio.bind(this)}
               fullWidth
             />
+            }
+            {this.state.modeModificar === true &&
+            <TextField
+              id="select-semestre-native"
+              select
+              label="Semestres"
+              value={this.state.semestre}
+              onChange={this.onChangeSemestre}
+              SelectProps={{
+                  MenuProps: {
+                  native: "false",
+                  },
+              }}
+              helperText="Selecciona el grup"
+              margin="normal"
+              >
+              {this.props.semestres.map(option => (
+                  <MenuItem key={option.id} value={option.id}>
+                  {option.nom}
+                  </MenuItem>
+              ))}
+            </TextField>
             }
           </DialogContent>
           <DialogActions>

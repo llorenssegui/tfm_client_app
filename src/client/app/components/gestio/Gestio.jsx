@@ -356,10 +356,10 @@ class Gestio extends React.Component {
                     <Grid item xs={12} sm={12} md={10} lg={10}>
                         <Paper className={classes.paper}>
                         {this.state.valueTab == 0 &&
-                            <Activitats grup={this.state.grupSeleccionat} centre={this.state.idCentre} semestre={this.state.semestreSeleccionat}/>
+                            <Activitats grup={this.state.grupSeleccionat} centre={this.state.idCentre} semestre={this.state.semestreSeleccionat} semestres={this.state.semestres}/>
                         }
                         {this.state.valueTab == 1 &&
-                            <Alumnes grup={this.state.grupSeleccionat} centre={this.state.idCentre} semestre={this.state.semestreSeleccionat}/>
+                            <Alumnes grup={this.state.grupSeleccionat} grups={this.state.grups} centre={this.state.idCentre} semestre={this.state.semestreSeleccionat}/>
                         }
                         </Paper>
                     </Grid>

@@ -142,7 +142,7 @@ class Activitats extends React.Component {
                 this.props.history.replace('/login');
             }
         });
-    };
+    }
 
     onProcessarFormulari (activitat, idActivitat) {
         if(activitat && activitat.nom !== "" && (!activitat.avaluable || activitat.ponderacio !== 0)) {
@@ -176,7 +176,10 @@ class Activitats extends React.Component {
     }
 
     obrirFormulari () {
-        this.setState({formulariObert: true});
+        this.setState({
+            formulariObert: true,
+            formulariModificar: false
+        });
     }
 
     getActivitats () {
@@ -259,7 +262,11 @@ class Activitats extends React.Component {
             if(activitat) {
                 let index = this.utils.getIndexElement(this.state.activitats, "id", activitat);
                 let nousActivitats = this.state.activitats;
-                nousActivitats[index] = activitat;
+                if(Number(this.props.semestre) !== Number(activitat.trimestre)) {
+                    nousActivitats.splice(index, 1);
+                } else {
+                    nousActivitats[index] = activitat;
+                }
                 this.setState({
                     activitats: nousActivitats,
                     formulariObert: false,
@@ -425,7 +432,8 @@ class Activitats extends React.Component {
                 onProcessarFormulari={this.onProcessarFormulari.bind(this)}
                 grup={this.props.grup}
                 centre={this.props.centre}
-                semestre={1}
+                semestre={this.props.semestre}
+                semestres={this.props.semestres}
                 modeModificar={this.state.formulariModificar}
             />
             <Notificacio 

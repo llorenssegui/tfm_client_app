@@ -129,7 +129,6 @@ class Activitats extends React.Component {
                 this.props.history.replace('/login');
             }
         }).then((grup) => {
-            debugger;
             let activitats = this.state.activitats.filter((activitat) => activitat.id !== this.state.activitatSeleccionada.id)
             this.setState({
                 activitats: activitats,

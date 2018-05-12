@@ -73,14 +73,21 @@ class Assignatures extends React.Component {
         this.peticioCrearAssignatura(assignatura, avaluacions, function(assignatura, avaluacions, context) {
             let id_curs = assignatura.curs;
             let id_assignatura = assignatura.id;
-            for(let i = 0; i < avaluacions.length; i++) {
+            debugger;
+            if(!avaluacions || avaluacions.length === 0) {
                 let avaluacio = {
-                    nom: avaluacions[i].label,
+                    nom: "Default",
                     assignatura: id_assignatura
                 };
-                context.peticioCrearAvaluacio(avaluacio, function(avaluacio, context) {
-                    
-                });
+                context.peticioCrearAvaluacio(avaluacio, function(avaluacio, context) {});
+            } else {
+                for(let i = 0; i < avaluacions.length; i++) {
+                    let avaluacio = {
+                        nom: avaluacions[i].label,
+                        assignatura: id_assignatura
+                    };
+                    context.peticioCrearAvaluacio(avaluacio, function(avaluacio, context) {});
+                }
             }
             context.peticioGETGrups(function(grups, context){
                 let grupsFiltrats = grups.filter(g => g.curs === id_curs && g.centre === Number(context.props.match.params.idCentre));
@@ -118,7 +125,7 @@ class Assignatures extends React.Component {
                 this.props.history.replace('/login');
             }
         }).then((assignaturaN) => {
-            callback(assignatura, avaluacions, this);
+            callback(assignaturaN, avaluacions, this);
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
             if (status === 401) {

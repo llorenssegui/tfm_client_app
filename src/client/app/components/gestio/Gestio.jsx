@@ -376,8 +376,8 @@ class Gestio extends React.Component {
         }
     }
 
-    teGrupPerDefecte(grups) {
-        return grups.length < 1 || (grups && grups.length === 1 && grups[0] && grups[0].nom && grups[0].nom.toLowerCase() === "default");
+    tePerDefecte(objectes) {
+        return objectes.length < 1 || (objectes && objectes.length === 1 && objectes[0] && objectes[0].nom && objectes[0].nom.toLowerCase() === "default");
     }
 
     render () {
@@ -414,7 +414,7 @@ class Gestio extends React.Component {
                                     objecte={this.state.semestres.filter((semestre) => semestre.id === this.state.semestreSeleccionat)[0]}
                                     titolAccio={this.TITOL_SEMESTRE}
                                     precessarAccio={this.processarGrupsSemestres.bind(this)}
-                                    edicio={true}
+                                    edicio={!this.tePerDefecte(this.state.semestres)}
                                     processarAccioEliminar={this.eliminarGrupSemestre.bind(this)}
                                 />
                             </Grid>
@@ -445,7 +445,7 @@ class Gestio extends React.Component {
                                 objecte={this.state.grups.filter((grup) => grup.id === this.state.grupSeleccionat)[0]}
                                 titolAccio={this.TITOL_GRUP}
                                 precessarAccio={this.processarGrupsSemestres.bind(this)}
-                                edicio={!this.teGrupPerDefecte(this.state.grups)}
+                                edicio={!this.tePerDefecte(this.state.grups)}
                                 processarAccioEliminar={this.eliminarGrupSemestre.bind(this)}
                             />
                             </Grid>

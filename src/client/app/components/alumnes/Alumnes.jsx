@@ -74,6 +74,7 @@ class Alumnes extends React.Component {
         this.setState({
             semestre: nextProps.semestre
         });
+        this.getAlumnes();
         this.getActivitats(function(context) {
             context.getQualificacions(context);
         });
@@ -116,7 +117,10 @@ class Alumnes extends React.Component {
     }
 
     obrirFormulari () {
-        this.setState({formulariObert: true});
+        this.setState({
+            formulariObert: true,
+            formulariModificar: false
+        });
     }
 
     getAlumnes () {
@@ -199,7 +203,11 @@ class Alumnes extends React.Component {
             if(alumne) {
                 let index = this.utils.getIndexElement(this.state.alumnes, "id", alumne);
                 let nousAlumnes = this.state.alumnes;
-                nousAlumnes[index] = alumne;
+                if(Number(this.props.grup) !== Number(alumne.grup)) {
+                    nousAlumnes.splice(index, 1);
+                } else {
+                    nousAlumnes[index] = alumne;
+                }
                 this.setState({
                     alumnes: nousAlumnes,
                     formulariObert: false,
@@ -361,6 +369,7 @@ class Alumnes extends React.Component {
                 onClickTancarFormulari={this.onClickTancarFormulari.bind(this)}
                 onProcessarFormulari={this.onProcessarFormulari.bind(this)}
                 grup={this.props.grup}
+                grups ={this.props.grups}
                 centre={this.props.centre}
                 modeModificar={this.state.formulariModificar}
             />

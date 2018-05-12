@@ -26,7 +26,6 @@ export default class FormulariActivitat extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    debugger;
     this.setState({
         nom: nextProps.activitat ? nextProps.activitat.nom : "",
         avaluable: nextProps.activitat ? nextProps.activitat.avaluable : true,
@@ -37,7 +36,6 @@ export default class FormulariActivitat extends React.Component {
   }
 
   onClickProcessarFormulari() {
-    debugger;
     let activitat = {
         nom: this.state.nom,
         avaluable: this.state.avaluable,
@@ -61,7 +59,6 @@ export default class FormulariActivitat extends React.Component {
   }
 
   onChangeSemestre = event => {
-    debugger;
     this.setState({ semestre: event.target.value });
   };
 
@@ -123,7 +120,7 @@ export default class FormulariActivitat extends React.Component {
                   native: "false",
                   },
               }}
-              helperText="Selecciona el grup"
+              helperText="Selecciona el semestre"
               margin="normal"
               >
               {this.props.semestres.map(option => (

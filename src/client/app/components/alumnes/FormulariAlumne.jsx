@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
+import { MenuItem } from 'material-ui/Menu';
 
 import Dialog, {
   DialogActions,
@@ -17,7 +18,8 @@ export default class FormulariAlumne extends React.Component {
       nom: this.props.alumne ? this.props.alumne.nom : "",
       congnom_1: this.props.alumne ? this.props.alumne.congnom_1 : "",
       congnom_2: this.props.alumne ? this.props.alumne.congnom_2 : "",
-      modeModificar: this.props.modeModificar ? this.props.modeModificar : false
+      modeModificar: this.props.modeModificar ? this.props.modeModificar : false,
+      grup: this.props.alumne ? this.props.alumne.grup : this.props.grup,
     };
   }
 
@@ -26,7 +28,8 @@ export default class FormulariAlumne extends React.Component {
         nom: nextProps.alumne ? nextProps.alumne.nom : "",
         congnom_1: nextProps.alumne ? nextProps.alumne.congnom_1 : "",
         congnom_2: nextProps.alumne ? nextProps.alumne.congnom_2 : "",
-        modeModificar: nextProps.modeModificar ? nextProps.modeModificar : false
+        modeModificar: nextProps.modeModificar ? nextProps.modeModificar : false,
+        grup: nextProps.alumne ? nextProps.alumne.grup : nextProps.grup,
     });
   }
 
@@ -53,6 +56,10 @@ export default class FormulariAlumne extends React.Component {
   onChangeCongnom_2 (event) {
     this.setState({congnom_2: event.target.value});
   }
+
+  onChangeGrup = event => {
+    this.setState({ grup: event.target.value });
+  };
 
   render() {
     return (
@@ -99,6 +106,28 @@ export default class FormulariAlumne extends React.Component {
               onChange={this.onChangeCongnom_2.bind(this)}
               fullWidth
             />
+            {this.state.modeModificar === true &&
+            <TextField
+              id="select-grup-native"
+              select
+              label="Grups"
+              value={this.state.grup}
+              onChange={this.onChangeGrup}
+              SelectProps={{
+                  MenuProps: {
+                  native: "false",
+                  },
+              }}
+              helperText="Selecciona el grup"
+              margin="normal"
+              >
+              {this.props.grups.map(option => (
+                  <MenuItem key={option.id} value={option.id}>
+                  {option.nom}
+                  </MenuItem>
+              ))}
+            </TextField>
+            }
           </DialogContent>
           <DialogActions>
             <Button onClick={this.props.onClickTancarFormulari} color="primary">

@@ -6,6 +6,7 @@ import Button from 'material-ui/Button';
 import AddIcon from '@material-ui/icons/Add';
 import Icon from 'material-ui/Icon';
 import FormulariAccio from './FormulariAccio.jsx';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const styles = theme => ({
     button: {
@@ -42,6 +43,10 @@ class Accions extends React.Component {
         });
     }
 
+    accioEliminar () {
+        this.props.processarAccioEliminar(this.state.objecte, this.props.titolAccio);
+    }
+
     accioEditar () {
         this.setState({
             objecteEditar: this.state.objecte,
@@ -72,6 +77,11 @@ class Accions extends React.Component {
         const { classes } = this.props;
         return (
             <div style={{textAlign: 'center'}}>
+                {this.props.edicio === true &&
+                <Button variant="fab" mini color="secondary" aria-label="add" className={classes.button} onClick={this.accioEliminar.bind(this)}>
+                    <DeleteIcon />
+                </Button>
+                }
                 {this.props.edicio === true &&
                 <Button variant="fab" mini color="secondary" aria-label="add" className={classes.button} onClick={this.accioEditar.bind(this)}>
                     <Icon>edit_icon</Icon>

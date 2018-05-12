@@ -65970,7 +65970,6 @@ var TaulaAlumnes = function (_React$Component) {
             }
             if (event.target.value && event.target.value !== "" && Number(event.target.value) > 0) {
                 this.qualificar(qualificacio, metode, function (context, qualificacio) {
-                    debugger;
                     context.props.updateQualificacio(qualificacio, index);
                 });
             }

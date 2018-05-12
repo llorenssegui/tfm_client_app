@@ -13,6 +13,7 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import Alumnes from '../alumnes/Alumnes.jsx';
 import Activitats from '../activitats/Activitats.jsx';
 import Accions from '../accionsGestio/Accions.jsx';
+import AlertDialog from '../dialogs/AlertDialog.jsx';
 
 const styles = theme => ({
     textField: {
@@ -52,7 +53,11 @@ class Gestio extends React.Component {
             semestres: [],
             grups: [],
             grupSeleccionat: 0,
-            semestreSeleccionat: 0
+            semestreSeleccionat: 0,
+            titolAlertDialog: "",
+            urlObjecteEliminar: "",
+            notificacioOberta: false,
+            alertaObertaEliminar: false
         };
         this.Auth = new AuthService();
         this.titolHeaderService = new TitolHeaderService();
@@ -277,9 +282,86 @@ class Gestio extends React.Component {
         }
     }
 
+    peticioElimnarGrupSemestre(objecte, urlParam, context, callback) {
+        debugger;
+        let url = config.apiEndpoint + '/' + urlParam + '/' + objecte.id + '/';
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': context.Auth.getToken()
+            }
+        }).then(function(response) {  
+            if(response.status === 200 || response.status === 201) {
+                return response.json();
+            } else if (response.status === 401) {
+                context.props.history.replace('/login');
+            }
+        }).then((objecte) => {
+            callback(context);
+        }).catch(function(error) {
+            const status = error.response ? error.response.status : 500
+            if (status === 401) {
+                context.props.history.replace('/login');
+            }
+        });
+    }
+
+    eliminarGrupSemestre (objecte, titol) {
+        if(titol === this.TITOL_SEMESTRE) {
+            this.setState({
+                alertaObertaEliminar: true,
+                titolAlertDialog: "Segur que vols eliminar el semestre seleccionat?",
+                urlObjecteEliminar: "trimestres"
+            });
+        } else if (titol === this.TITOL_GRUP) {
+            this.setState({
+                alertaObertaEliminar: true,
+                titolAlertDialog: "Segur que vols eliminar el grup seleccionat?",
+                urlObjecteEliminar: "grups"
+            });
+        }
+    }
+
+    tancarAlertDialogEliminar () {
+        this.setState({
+            alertaObertaEliminar: false
+        });
+    }
+
+    accioEliminar () {
+        debugger;
+        var objecte = undefined;    
+        if(this.state.urlObjecteEliminar === "trimestres") {
+            objecte = this.state.semestres.find((element) => element.id == this.state.semestreSeleccionat);
+            this.peticioElimnarGrupSemestre(objecte, "trimestres", this, function(context) {
+                let semestres = this.state.semestres.filter((semestre) => semestre.id !== objecte.id);
+                context.setState({
+                    semestres: semestres,
+                    alertaObertaEliminar: false,
+                    titolAlertDialog: "",
+                    urlObjecteEliminar: "",
+                    semestreSeleccionat: 0
+                });
+            });
+        } else if (this.state.urlObjecteEliminar === "grups") {
+            objecte = this.state.grups.find((element) => element.id == this.state.grupSeleccionat);
+            this.peticioElimnarGrupSemestre(objecte, "grups", this, function(context) {
+                let grups = this.state.grups.filter((grup) => grup.id !== objecte.id);
+                context.setState({
+                    grups: grups,
+                    alertaObertaEliminar: false,
+                    titolAlertDialog: "",
+                    urlObjecteEliminar: "",
+                    grupSeleccionat: 0
+                });
+            });
+        }
+    }
+
     teGrupPerDefecte(grups) {
         return grups.length < 1 || (grups && grups.length === 1 && grups[0] && grups[0].nom && grups[0].nom.toLowerCase() === "default");
-      }
+    }
 
     render () {
         const { classes } = this.props;
@@ -316,6 +398,7 @@ class Gestio extends React.Component {
                                     titolAccio={this.TITOL_SEMESTRE}
                                     precessarAccio={this.processarGrupsSemestres.bind(this)}
                                     edicio={true}
+                                    processarAccioEliminar={this.eliminarGrupSemestre.bind(this)}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={6} lg={6}>
@@ -346,6 +429,7 @@ class Gestio extends React.Component {
                                 titolAccio={this.TITOL_GRUP}
                                 precessarAccio={this.processarGrupsSemestres.bind(this)}
                                 edicio={!this.teGrupPerDefecte(this.state.grups)}
+                                processarAccioEliminar={this.eliminarGrupSemestre.bind(this)}
                             />
                             </Grid>
                         </Grid>
@@ -387,6 +471,12 @@ class Gestio extends React.Component {
                         </Paper>
                     </Grid>
                 </Grid>
+                <AlertDialog 
+                    missatge={this.state.titolAlertDialog}
+                    open={this.state.alertaObertaEliminar}
+                    onCloseDialog={this.tancarAlertDialogEliminar.bind(this)}
+                    confirmarAccio={this.accioEliminar.bind(this)}
+                />
             </div>
         );
     }

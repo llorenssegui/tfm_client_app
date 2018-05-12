@@ -14,6 +14,7 @@ import Alumnes from '../alumnes/Alumnes.jsx';
 import Activitats from '../activitats/Activitats.jsx';
 import Accions from '../accionsGestio/Accions.jsx';
 import AlertDialog from '../dialogs/AlertDialog.jsx';
+import Notificacio from '../notificacions/Notificacio.jsx';
 
 const styles = theme => ({
     textField: {
@@ -44,7 +45,7 @@ class Gestio extends React.Component {
         super(props);
 
         this.TITOL_SEMESTRE = "Semestre";
-        this.TITOL_GRUP = "Grup"
+        this.TITOL_GRUP = "Grup";
         this.state = {
             valueTab: 0,
             assignatura: undefined,
@@ -57,7 +58,9 @@ class Gestio extends React.Component {
             titolAlertDialog: "",
             urlObjecteEliminar: "",
             notificacioOberta: false,
-            alertaObertaEliminar: false
+            alertaObertaEliminar: false,
+            mostrarNotificacio: false,
+            titolNotificacio: ""
         };
         this.Auth = new AuthService();
         this.titolHeaderService = new TitolHeaderService();
@@ -231,6 +234,10 @@ class Gestio extends React.Component {
         this.setState({ valueTab: value });
     };
 
+    tancarNotificacio () {
+        this.setState({mostrarNotificacio: false });
+    }
+
     processarGrupsSemestres (objecte, titol) {
         if(titol === this.TITOL_SEMESTRE) {
             if(!objecte.assignatura) {
@@ -246,11 +253,15 @@ class Gestio extends React.Component {
                         }
                     });
                     context.setState({
-                        semestres: semestres
+                        semestres: semestres,
+                        titolNotificacio: "Semestre editat satisfactoriament",
+                        mostrarNotificacio: true
                     });
                 } else {
                     context.setState({
-                        semestres: context.state.semestres.concat([semestre])
+                        semestres: context.state.semestres.concat([semestre]),
+                        titolNotificacio: "Semestre creat satisfactoriament",
+                        mostrarNotificacio: true
                     });
                 }
             });
@@ -271,11 +282,15 @@ class Gestio extends React.Component {
                         }
                     });
                     context.setState({
-                        grups: grups
+                        grups: grups,
+                        titolNotificacio: "Grup editat satisfactoriament",
+                        mostrarNotificacio: true
                     });
                 } else {
                     context.setState({
-                        grups: context.state.grups.concat([grup])
+                        grups: context.state.grups.concat([grup]),
+                        titolNotificacio: "Grup creat satisfactoriament",
+                        mostrarNotificacio: true
                     });
                 }
             });
@@ -283,7 +298,6 @@ class Gestio extends React.Component {
     }
 
     peticioElimnarGrupSemestre(objecte, urlParam, context, callback) {
-        debugger;
         let url = config.apiEndpoint + '/' + urlParam + '/' + objecte.id + '/';
         fetch(url, {
             method: 'DELETE',
@@ -330,30 +344,33 @@ class Gestio extends React.Component {
     }
 
     accioEliminar () {
-        debugger;
         var objecte = undefined;    
         if(this.state.urlObjecteEliminar === "trimestres") {
             objecte = this.state.semestres.find((element) => element.id == this.state.semestreSeleccionat);
             this.peticioElimnarGrupSemestre(objecte, "trimestres", this, function(context) {
-                let semestres = this.state.semestres.filter((semestre) => semestre.id !== objecte.id);
+                let semestres = context.state.semestres.filter((semestre) => semestre.id !== objecte.id);
                 context.setState({
                     semestres: semestres,
                     alertaObertaEliminar: false,
                     titolAlertDialog: "",
                     urlObjecteEliminar: "",
-                    semestreSeleccionat: 0
+                    semestreSeleccionat: context.state.semestres.length > 0 ? context.state.semestres[0].id : 0,
+                    titolNotificacio: "Semestre eliminat satisfactoriament",
+                    mostrarNotificacio: true
                 });
             });
         } else if (this.state.urlObjecteEliminar === "grups") {
             objecte = this.state.grups.find((element) => element.id == this.state.grupSeleccionat);
             this.peticioElimnarGrupSemestre(objecte, "grups", this, function(context) {
-                let grups = this.state.grups.filter((grup) => grup.id !== objecte.id);
+                let grups = context.state.grups.filter((grup) => grup.id !== objecte.id);
                 context.setState({
                     grups: grups,
                     alertaObertaEliminar: false,
                     titolAlertDialog: "",
                     urlObjecteEliminar: "",
-                    grupSeleccionat: 0
+                    grupSeleccionat: context.state.grups.length > 0 ? context.state.grups[0].id : 0,
+                    titolNotificacio: "Grup eliminat satisfactoriament",
+                    mostrarNotificacio: true
                 });
             });
         }
@@ -476,6 +493,11 @@ class Gestio extends React.Component {
                     open={this.state.alertaObertaEliminar}
                     onCloseDialog={this.tancarAlertDialogEliminar.bind(this)}
                     confirmarAccio={this.accioEliminar.bind(this)}
+                />
+                 <Notificacio 
+                    open={this.state.mostrarNotificacio}
+                    missatge={this.state.titolNotificacio}
+                    onCloseNotificacio={this.tancarNotificacio.bind(this)}
                 />
             </div>
         );

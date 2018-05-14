@@ -13,6 +13,7 @@ import config from '../../../../../config.js';
 import Utils from '../../utils.jsx';
 import AuthService from '../../services/AuthService.jsx';
 import TitolHeaderService from '../../services/TitolHeaderService.jsx';
+import Missatge from '../missatge/Missatge';
 
 const styles = theme => ({
     root: {
@@ -194,6 +195,9 @@ class Centres extends React.Component {
                             />
                         </Grid>);
                     })}
+                    {this.props.centres === undefined || this.props.centres.length === 0 &&
+                        <Missatge missatge={"No s'han creat centres acadèmics."} />
+                    }
                     <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                         <AddIcon />
                     </Button> 

@@ -13,6 +13,7 @@ import Utils from '../../utils.jsx';
 import FormulariAssignatura from './FormulariAssignatura.jsx';
 import AuthService from '../../services/AuthService.jsx';
 import TitolHeaderService from '../../services/TitolHeaderService.jsx';
+import Missatge from '../missatge/Missatge.jsx';
 
 const styles = theme => ({
     root: {
@@ -394,9 +395,13 @@ class Assignatures extends React.Component {
     }
 
     seleccionarAssignatura (assignatura) {
+        debugger;
         this.props.history.push({
             pathname: this.state.idAnyAcademic + "/assignatura/" + assignatura.id,
-            state: {assignatura: assignatura}
+            state: {
+                assignatura: assignatura,
+                curs: this.obtenirCurs(assignatura.curs)
+            }
         });
     }
 
@@ -422,6 +427,9 @@ class Assignatures extends React.Component {
                             />
                         </Grid>);
                     })}
+                    {this.state.assignatures === undefined || this.state.assignatures.length === 0 &&
+                        <Missatge missatge={"No s'han creat anys acadèmics."} />
+                    }
                     <AlertDialog 
                         open={this.state.alertDialogObert}
                         titol={this.state.titolAlertDialog}

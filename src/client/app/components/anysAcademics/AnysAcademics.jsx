@@ -14,6 +14,7 @@ import AlertDialog from '../dialogs/AlertDialog.jsx';
 import FormulariGrups from './FormulariGrups.jsx';
 import AuthService from '../../services/AuthService.jsx';
 import TitolHeaderService from '../../services/TitolHeaderService.jsx';
+import Missatge from '../missatge/Missatge.jsx';
 
 const styles = theme => ({
   root: {
@@ -254,6 +255,9 @@ class AnysAcademics extends React.Component {
                     <Button onClick={this.handleFormulari.bind(this)} variant="fab" color="primary" aria-label="add" className={classes.button}>
                         <AddIcon />
                     </Button>
+                    {this.state.anysAcademics === undefined || this.state.anysAcademics.length === 0 &&
+                        <Missatge missatge={"No s'han creat anys acadèmics."} />
+                    }
                     <FormulariCrearAnyAcademic 
                         open={this.state.formulariCrearAnyAcademicObert}
                         handleClose={this.handleCloseFormulari.bind(this)}

@@ -34,7 +34,6 @@ class Home extends React.Component {
             if (centres) {
                 let id_professor = this.Auth.getProfile().id;
                 let filteredCentres = centres.filter((centre) => centre.professor === id_professor);
-                if(!filteredCentres || filteredCentres.length === 0) this.props.history.replace('/notFound');
                 this.setState({ centres: filteredCentres });
             }
         }).catch(function(error) {

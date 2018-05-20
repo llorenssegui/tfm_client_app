@@ -157,33 +157,34 @@ class Perfil extends React.Component {
     }
 
     getProfessor() {
-        debugger;
-        let url = config.apiEndpoint + '/professors/' + this.Auth.getProfile().id + '/';
-        fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': this.Auth.getToken()
-            }
-        }).then(function(response) {  
-            if(response.status === 200 || response.status === 201) {
-                return response.json();
-            } else if (response.status === 401) {
-                this.props.history.replace('/login');
-            }
-        }).then((professor) => {
-            this.setState({
-                nom: professor.nom,
-                congnom_1: professor.congnom_1,
-                congnom_2: professor.congnom_2,
-                data_naixement: professor.data_naixement
+        if(this.Auth.loggedIn()) {
+            let url = config.apiEndpoint + '/professors/' + this.Auth.getProfile().id + '/';
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': this.Auth.getToken()
+                }
+            }).then(function(response) {  
+                if(response.status === 200 || response.status === 201) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    this.props.history.replace('/login');
+                }
+            }).then((professor) => {
+                this.setState({
+                    nom: professor.nom,
+                    congnom_1: professor.congnom_1,
+                    congnom_2: professor.congnom_2,
+                    data_naixement: professor.data_naixement
+                });
+            }).catch(function(error) {
+                const status = error.response ? error.response.status : 500
+                if (status === 401) {
+                    this.props.history.replace('/login');
+                }
             });
-        }).catch(function(error) {
-            const status = error.response ? error.response.status : 500
-            if (status === 401) {
-                this.props.history.replace('/login');
-            }
-        });
+        }
     }
 
     handleFormSubmit = event => {

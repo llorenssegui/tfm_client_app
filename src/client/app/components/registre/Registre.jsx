@@ -43,6 +43,12 @@ class Registre extends React.Component {
             missatgeEmailExistent: "Ja existeix un compte amb el correu",
             dialogObert: false
         };
+        this.propsNotValidate = [
+            "validForm",
+            "missatgeEmailExistent",
+            "dialogObert",
+            "alertDialogObert",
+        ];
         this.Auth = new AuthService();
         this.titolHeaderService = new TitolHeaderService();
     }
@@ -50,7 +56,7 @@ class Registre extends React.Component {
     componentWillMount () {
         let validFormAux = {};
         for (let key in this.state) {
-            if(key !== "validForm" && key !== "alertDialogObert") {   
+            if(this.propsNotValidate.indexOf("" + key) == -1) {   
                 validFormAux[key] = false;
             }
         }
@@ -62,8 +68,12 @@ class Registre extends React.Component {
     }
 
     handleChange = name => event => {
+        let validForm = this.state.validForm;
+        if(event.target.value === "") validForm[name] = true;
+        else validForm[name] = false;
         this.setState({
           [name]: event.target.value,
+          validForm: validForm
         });
         
     }
@@ -86,10 +96,11 @@ class Registre extends React.Component {
     }
 
     formIsValid() {
+        debugger;
         let validFormAux = {};
         let isValid = true;
         for (let key in this.state) {
-            if(key !== "validForm" && (!this.state[key] || this.state[key] === "")) {   
+            if(this.propsNotValidate.indexOf("" + key) == -1 && (!this.state[key] || this.state[key] === "")) {   
                 validFormAux[key] = true;
                 isValid = false;
             }
@@ -103,7 +114,7 @@ class Registre extends React.Component {
         event.stopPropagation();
         var that = this;
         let url = config.apiEndpoint + '/professors/';
-        if(true && this.state.password === this.state.password_2) {
+        if(this.formIsValid() && this.state.password === this.state.password_2) {
             let professor = {
                 nom: this.state.nom,
                 email: this.state.email,

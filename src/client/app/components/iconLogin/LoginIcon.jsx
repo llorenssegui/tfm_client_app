@@ -6,6 +6,7 @@ import AccountCircle from 'material-ui-icons/AccountCircle';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const styles = {
     root: {
@@ -36,6 +37,7 @@ class LoginIcon extends React.Component {
       };
     
     handleClose = () => {
+        window.location = "/perfil";
         this.setState({ anchorEl: null });
     };
 

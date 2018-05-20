@@ -47,7 +47,7 @@ class Header extends React.Component {
                         <p id="titolHeader">Teacher Support</p>
                     </Typography></Grid>
 
-                    {this.Auth.loggedIn() && <Grid xs={true} sm={true} md={true} lg={true}><div className={classes.marginIcon}><LoginIcon /></div></Grid>
+                    {this.Auth.loggedIn() && <Grid xs={true} sm={true} md={true} lg={true}><div className={classes.marginIcon}><LoginIcon history={this.props.history}/></div></Grid>
                     }    
                     </Toolbar>
                 </AppBar>

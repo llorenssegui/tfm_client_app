@@ -7,7 +7,6 @@ import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import DialogComponent from '../dialogs/DialogComponent.jsx';
 import TitolHeaderService from '../../services/TitolHeaderService.jsx';
 import ExpansionPanel, {
     ExpansionPanelDetails,
@@ -17,6 +16,7 @@ import ExpansionPanel, {
 import Divider from 'material-ui/Divider';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from 'material-ui/Typography';
+import Notificacio from '../notificacions/Notificacio.jsx';
 
 const styles = theme => ({
     root: theme.mixins.gutters({
@@ -45,7 +45,6 @@ class Perfil extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            alertDialogObert: false,
             nom: "",
             congnom_1: "",
             congnom_2: "",
@@ -59,8 +58,8 @@ class Perfil extends React.Component {
                 password_nova: false,
                 password_actual: false
             },
-            missatgeEmailExistent: "Ja existeix un compte amb el correu",
-            dialogObert: false
+            titolNotificacio: "Dades personals actualitzades",
+            mostrarNotificacio: false
         };
         this.propsNotValidate = [
             "password_actual", 
@@ -69,8 +68,7 @@ class Perfil extends React.Component {
             "validForm",
             "missatgeEmailExistent",
             "validFormPassword",
-            "dialogObert",
-            "alertDialogObert"
+            "mostrarNotificacio",
         ];
         this.Auth = new AuthService();
         this.titolHeaderService = new TitolHeaderService();
@@ -82,7 +80,7 @@ class Perfil extends React.Component {
         }
         let validFormAux = {};
         for (let key in this.state) {
-            if(this.propsNotValidate.indexOf("" + key) == -1 && key !== "alertDialogObert") {   
+            if(this.propsNotValidate.indexOf("" + key) == -1) {   
                 validFormAux[key] = false;
             }
         }
@@ -120,7 +118,7 @@ class Perfil extends React.Component {
 
     tancarDialog () {
         this.setState({
-            dialogObert: false
+            mostrarNotificacio: false
         });
     }
 
@@ -129,7 +127,7 @@ class Perfil extends React.Component {
         let isValid = true;
         for (let key in this.state) {
             if(this.propsNotValidate.indexOf("" + key) == -1 && (!this.state[key] || this.state[key] === "")) {   
-                validFormAux[key] = true;
+                validFormAux[key] = false;
                 isValid = false;
             }
         }
@@ -142,7 +140,7 @@ class Perfil extends React.Component {
         let validFormAux = {};
         let isValid = true;
         for (let key in this.state) {
-            if(this.state.validFormPassword.hasOwnProperty(key) && (!this.state.validFormPassword[key] || this.state.validFormPassword[key] === "")) {   
+            if(this.state.validFormPassword.hasOwnProperty(key) && (!this.state[key] || this.state[key] === "")) {   
                 validFormAux[key] = true;
                 isValid = false;
             }
@@ -152,7 +150,14 @@ class Perfil extends React.Component {
         return isValid;
     }
 
+    tancarNotificacio () {
+        this.setState({
+            mostrarNotificacio: false
+        });
+    }
+
     getProfessor() {
+        debugger;
         let url = config.apiEndpoint + '/professors/' + this.Auth.getProfile().id + '/';
         fetch(url, {
             method: 'GET',
@@ -170,7 +175,8 @@ class Perfil extends React.Component {
             this.setState({
                 nom: professor.nom,
                 congnom_1: professor.congnom_1,
-                congnom_2: professor.congnom_2
+                congnom_2: professor.congnom_2,
+                data_naixement: professor.data_naixement
             });
         }).catch(function(error) {
             const status = error.response ? error.response.status : 500
@@ -209,7 +215,10 @@ class Perfil extends React.Component {
                 this.setState({
                     nom: professor.nom,
                     congnom_1: professor.congnom_1,
-                    congnom_2: professor.congnom_2
+                    congnom_2: professor.congnom_2,
+                    data_naixement: professor.data_naixement,
+                    titolNotificacio: "Dades personals actualitzades",
+                    mostrarNotificacio: true,
                 });
             }).catch(function(error) {
                 const status = error.response ? error.response.status : 500
@@ -246,7 +255,9 @@ class Perfil extends React.Component {
                 this.setState({
                     password_nova: "",
                     password_nova_2: "",
-                    password_actual: ""
+                    password_actual: "",
+                    titolNotificacio: "Contrassenya actualitzada",
+                    mostrarNotificacio: true,
                 });
             }).catch(function(error) {
                 const status = error.response ? error.response.status : 500
@@ -264,11 +275,6 @@ class Perfil extends React.Component {
         return(
             <form onSubmit={this.handleFormSubmit}>
                 <Grid container>
-                    <DialogComponent 
-                        open={this.state.dialogObert} 
-                        tancarDialog={this.tancarDialog.bind(this)} 
-                        missatge={this.state.missatgeEmailExistent}
-                    />
                     <Grid item xs={true} md={2}/>
                     <Grid item xs={12} md={8}>
                         <Paper className={classes.root}>
@@ -317,6 +323,7 @@ class Perfil extends React.Component {
                                         type="date"
                                         defaultValue=""
                                         className={classes.textField}
+                                        value={this.state.data_naixement}
                                         InputLabelProps={{
                                             shrink: true,
                                         }}
@@ -385,6 +392,11 @@ class Perfil extends React.Component {
                          </ExpansionPanel>
                     </Grid>
                     <Grid item xs={true} md={2}/>
+                    <Notificacio 
+                        open={this.state.mostrarNotificacio}
+                        missatge={this.state.titolNotificacio}
+                        onCloseNotificacio={this.tancarNotificacio.bind(this)}
+                    />
                 </Grid>
             </form>
         );

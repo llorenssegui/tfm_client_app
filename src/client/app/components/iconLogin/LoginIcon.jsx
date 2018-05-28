@@ -44,7 +44,7 @@ class LoginIcon extends React.Component {
     handleLogout = () => {
         this.setState({ anchorEl: null });
         this.Auth.logout();
-        location.reload();
+        window.location = "/login";
     };
 
     render() {

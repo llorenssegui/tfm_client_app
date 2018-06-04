@@ -32,7 +32,7 @@ const styles = {
                         <a href="/autor"><Typography className={classes.link} variant="body2" style={{textAlign: 'center'}}>Autor</Typography></a>
                     </Grid>
                     <Grid item xs={4}>
-                        <Typography className={classes.link} variant="body2" style={{textAlign: 'center'}}>Contacte</Typography>
+                        <a href="/contacte"><Typography className={classes.link} variant="body2" style={{textAlign: 'center'}}>Contacte</Typography></a>
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.link} variant="body2" style={{textAlign: 'center'}}>Avis legal</Typography>

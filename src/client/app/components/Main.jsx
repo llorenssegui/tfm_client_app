@@ -3,6 +3,7 @@ import Login from './login/Login.jsx';
 import Home from './home/Home.jsx';
 import Registre from './registre/Registre.jsx';
 import Perfil from './perfil/Perfil.jsx';
+import Autor from './autor/Autor.jsx';
 import NoTrobat from './notrobat/NoTrobat.jsx';
 import Assignatures from './assignatures/Assignatures.jsx';
 import AnysAcademics from './anysAcademics/AnysAcademics.jsx';
@@ -34,6 +35,7 @@ class Main extends React.Component {
                   <Route exact path='/login' component={Login} />
                   <Route exact path='/registre' component={Registre} />
                   <Route exact path='/perfil' component={Perfil} />
+                  <Route exact path='/autor' component={Autor} />
                   <Route component={NoTrobat}/> 
                </Switch>
             </BrowserRouter>

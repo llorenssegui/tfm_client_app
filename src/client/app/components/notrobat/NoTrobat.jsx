@@ -38,5 +38,3 @@ NoTrobat.propTypes = {
   };
   
 export default withStyles(styles)(NoTrobat);
-
-//export default NoTrobat;

@@ -24,7 +24,7 @@ import Utils from '../../utils.jsx';
 const styles = theme => ({
     root: {
         flexGrow: 1,
-      },
+    },
     heading: {
         fontSize: theme.typography.pxToRem(15),
         flexBasis: '33.33%',

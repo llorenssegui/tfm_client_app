@@ -96,7 +96,6 @@ class Registre extends React.Component {
     }
 
     formIsValid() {
-        debugger;
         let validFormAux = {};
         let isValid = true;
         for (let key in this.state) {

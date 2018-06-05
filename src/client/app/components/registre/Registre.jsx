@@ -14,7 +14,7 @@ const styles = theme => ({
     root: theme.mixins.gutters({
       paddingTop: 16,
       paddingBottom: 16,
-      marginTop: theme.spacing.unit * 3,
+      marginBottom: theme.spacing.unit * 3,
     }),
     textField: {
         marginLeft: theme.spacing.unit,
@@ -166,7 +166,7 @@ class Registre extends React.Component {
     render() {
         const { classes } = this.props;
         return(
-            <form onSubmit={this.handleFormSubmit}>
+            <form onSubmit={this.handleFormSubmit} className={classes.root}>
                 <Grid container>
                     <DialogComponent 
                         open={this.state.dialogObert} 

@@ -22,7 +22,7 @@ const styles = theme => ({
     root: theme.mixins.gutters({
       paddingTop: 16,
       paddingBottom: 16,
-      marginTop: theme.spacing.unit * 3,
+      marginBottom: theme.spacing.unit * 3,
     }),
     textField: {
         marginLeft: theme.spacing.unit,
@@ -136,7 +136,6 @@ class Perfil extends React.Component {
     }
 
     formPasswordIsValid() {
-        debugger;
         let validFormAux = {};
         let isValid = true;
         for (let key in this.state) {
@@ -145,7 +144,6 @@ class Perfil extends React.Component {
                 isValid = false;
             }
         }
-        debugger;
         this.setState({validFormPassword: validFormAux});
         return isValid;
     }
@@ -238,7 +236,6 @@ class Perfil extends React.Component {
                 password_actual: this.state.password_actual,
                 password_nova: this.state.password_nova
             };
-            debugger;
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -274,7 +271,7 @@ class Perfil extends React.Component {
     render() {
         const { classes } = this.props;
         return(
-            <form onSubmit={this.handleFormSubmit}>
+            <form onSubmit={this.handleFormSubmit} className={classes.root}>
                 <Grid container>
                     <Grid item xs={true} md={2}/>
                     <Grid item xs={12} md={8}>

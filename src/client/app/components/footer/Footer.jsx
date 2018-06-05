@@ -6,8 +6,8 @@ import Grid from 'material-ui/Grid';
 
 const styles = {
     root: {
+        bottom:0,
         position: 'absolute',
-        bottom: 0,
         width: '100%',
         height: '30px',   /* Height of the footer */
         backgroundColor: '#E1E2E1',
@@ -35,7 +35,7 @@ const styles = {
                         <a href="/contacte"><Typography className={classes.link} variant="body2" style={{textAlign: 'center'}}>Contacte</Typography></a>
                     </Grid>
                     <Grid item xs={4}>
-                        <Typography className={classes.link} variant="body2" style={{textAlign: 'center'}}>Avis legal</Typography>
+                        <a href="/legal"><Typography className={classes.link} variant="body2" style={{textAlign: 'center'}}>Avis legal</Typography></a>
                     </Grid>
                 </Grid>
             </footer>

@@ -51,7 +51,7 @@ class Header extends React.Component {
             <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                    <Grid xs={2} sm={2} md={true} lg={true}><HomeIcon className={classes.icon} /></Grid>
+                    <Grid xs={2} sm={2} md={true} lg={true}><HomeIcon className={classes.icon} onClick={this.goHomePage.bind(this)}/></Grid>
                     <Grid xs={10} sm={10} md={12} lg={12}><Typography 
                         variant="title" 
                         color="inherit" 

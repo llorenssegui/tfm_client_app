@@ -7,8 +7,9 @@ import Typography from 'material-ui/Typography';
 import LoginIcon from './iconLogin/LoginIcon.jsx';
 import AuthService from '../services/AuthService.jsx';
 import Grid from 'material-ui/Grid';
+import SvgIcon from 'material-ui/SvgIcon';
 
-const styles = {
+const styles = theme => ({
   root: {
     flexGrow: 1,
   },
@@ -17,8 +18,20 @@ const styles = {
   },
   marginIcon: {
       marginRight: '100%'
-  }
-};
+  },
+  icon: {
+    margin: theme.spacing.unit * 2,
+    cursor: 'pointer'
+  },
+});
+
+function HomeIcon(props) {
+    return (
+        <SvgIcon {...props}>
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+        </SvgIcon>
+    );
+}
 
 class Header extends React.Component {
 
@@ -38,7 +51,8 @@ class Header extends React.Component {
             <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                    <Grid xs={12} sm={12} md={12} lg={12}><Typography 
+                    <Grid xs={2} sm={2} md={true} lg={true}><HomeIcon className={classes.icon} /></Grid>
+                    <Grid xs={10} sm={10} md={12} lg={12}><Typography 
                         variant="title" 
                         color="inherit" 
                         onClick={this.goHomePage.bind(this)}
@@ -60,4 +74,4 @@ Header.propTypes = {
     classes: PropTypes.object.isRequired,
 };
   
-  export default withStyles(styles)(Header);
+export default withStyles(styles)(Header);

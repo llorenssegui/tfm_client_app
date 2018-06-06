@@ -89,7 +89,6 @@ class Gestio extends React.Component {
     componentDidMount () {
         this.titolHeaderService.setTitol(this.props.location.state.assignatura.nom + " (" + this.props.location.state.curs.nom + " " + this.props.location.state.curs.nivell.toUpperCase() + ")");
         var elem = document.getElementById("footer");
-        debugger;
         elem.parentNode.removeChild(elem);
     }
 
